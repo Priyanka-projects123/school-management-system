@@ -1,0 +1,22 @@
+{
+  "short_name": "Radha Raman App",
+  "name": "Radha Raman Education Institute - School Management System",
+  "description": "School Management System for Students, Marks, Fees & Report Cards",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2997/2997295.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2997/2997295.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#463EC7",
+  "theme_color": "#463EC7",
+  "display": "standalone",
+  "orientation": "any"
+}

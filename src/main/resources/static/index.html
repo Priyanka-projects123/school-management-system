@@ -1,0 +1,3520 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#C76E1A] text-white">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radha Raman Education Institute | School Management System</title>
+  <!-- PWA Manifest & Theme Color -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#463EC7">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+            signature: ['"Dancing Script"', 'cursive'],
+          },
+          colors: {
+            figma: {
+              purple: '#8A25B1',
+              purpleDark: '#741D96',
+              purplePill: '#A439C9',
+              ochre: '#C76E1A',
+              ochreLight: '#D97E25',
+              blueBg: '#463EC7',
+              pinkCard: '#CD38B3'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6, .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+    .font-signature {
+      font-family: 'Dancing Script', cursive;
+    }
+    .figma-card {
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .figma-input {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+    .figma-input:focus {
+      outline: 2px solid #8A25B1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-report-card, #printable-report-card * {
+        visibility: visible;
+      }
+      #printable-report-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        color: #000 !important;
+        background: #fff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="h-full overflow-hidden bg-[#C76E1A] text-white antialiased selection:bg-purple-600 selection:text-white">
+
+  <div id="app" class="h-full flex flex-col">
+
+    <!-- Screen 1: Login Frame (Figma Dual Card Layout) -->
+    <div id="frame-login" class="h-full w-full relative flex items-center justify-center bg-[#463EC7] p-4 overflow-y-auto">
+      <div class="w-full max-w-4xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden my-auto">
+        
+        <!-- Left Side: Login Pink Card -->
+        <div class="w-full md:w-1/2 bg-[#CD38B3] p-8 flex flex-col justify-between">
+          <div>
+            <div class="text-center mb-6">
+              <span class="inline-block px-6 py-2 rounded-full bg-white/90 text-[#8A25B1] font-extrabold text-xl shadow">
+                Portal Login !!
+              </span>
+            </div>
+
+            <!-- Role Selection Tabs -->
+            <div class="flex bg-purple-900/40 p-1 rounded-xl mb-6 border border-white/20">
+              <button type="button" onclick="setLoginRole('admin')" id="role-btn-admin" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-950 bg-amber-400 shadow">Admin</button>
+              <button type="button" onclick="setLoginRole('teacher')" id="role-btn-teacher" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-white hover:bg-white/10">Teacher</button>
+              <button type="button" onclick="setLoginRole('student')" id="role-btn-student" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-white hover:bg-white/10">Student</button>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Email ID / User ID</label>
+                <input type="email" id="login-user" required value="" class="w-full px-4 py-2.5 rounded-full figma-input text-sm font-semibold" placeholder="Enter your email address">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Password</label>
+                <div class="relative">
+                  <input type="password" id="login-pass" required value="" class="w-full px-4 py-2.5 pr-10 rounded-full figma-input text-sm font-semibold" placeholder="Enter password">
+                  <button type="button" onclick="togglePasswordVisibility('login-pass', 'eye-icon-login')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-purple-700 transition-colors p-1" title="Toggle Password Visibility">
+                    <i id="eye-icon-login" data-lucide="eye" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button type="submit" class="w-full py-3 px-6 rounded-full bg-[#463EC7] hover:bg-indigo-700 text-white font-extrabold shadow-lg transition-all flex items-center justify-center space-x-2 text-sm">
+                  <span>Sign In</span>
+                  <i data-lucide="log-in" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="mt-6 text-center text-xs font-semibold text-white/90">
+            Need an account? <button type="button" onclick="showRegisterPage()" class="underline font-bold text-amber-300 hover:text-white">Register Account</button>
+          </div>
+        </div>
+
+        <!-- Right Side: White Emblem Display Box -->
+        <div class="w-full md:w-1/2 bg-white p-8 flex flex-col items-center justify-center text-center">
+          <div class="w-48 h-48 mb-4 flex items-center justify-center">
+            <img src="logo.png" alt="Radha Raman Emblem" class="w-full h-full object-contain">
+          </div>
+          <h2 class="text-xl font-extrabold text-slate-900 font-display" id="login-emblem-title">Radha Raman Education Institute</h2>
+          <p class="text-xs text-purple-700 font-bold mt-1 uppercase tracking-widest" id="login-emblem-sub">Sirasana • Academic Portal</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Screen 1B: Register Frame -->
+    <div id="frame-register" class="h-full w-full relative flex items-center justify-center bg-[#463EC7] p-4 overflow-y-auto hidden">
+      <div class="w-full max-w-4xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden my-auto">
+        
+        <!-- Left Side: Registration Pink Card -->
+        <div class="w-full md:w-1/2 bg-[#CD38B3] p-8 flex flex-col justify-between">
+          <div>
+            <div class="text-center mb-6">
+              <span class="inline-block px-6 py-2 rounded-full bg-emerald-100 text-[#8A25B1] font-extrabold text-xl shadow">
+                Create your account !!
+              </span>
+            </div>
+
+            <form onsubmit="handleRegister(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Full Name</label>
+                <input type="text" id="reg-name" required class="w-full px-4 py-2.5 rounded-full figma-input text-xs font-semibold" placeholder="Enter full name">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Email ID</label>
+                <input type="email" id="reg-email" required class="w-full px-4 py-2.5 rounded-full figma-input text-xs font-semibold" placeholder="Enter your email address">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Role</label>
+                <select id="reg-role" required class="w-full px-4 py-2.5 rounded-full figma-input text-xs font-semibold">
+                  <option value="admin">Admin / Principal (2 Slots Max)</option>
+                  <option value="teacher">Teacher</option>
+                  <option value="student">Student</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Password</label>
+                <div class="relative">
+                  <input type="password" id="reg-pass" required class="w-full px-4 py-2.5 pr-10 rounded-full figma-input text-xs font-semibold" placeholder="Create password">
+                  <button type="button" onclick="togglePasswordVisibility('reg-pass', 'eye-icon-reg')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-purple-700 transition-colors p-1">
+                    <i id="eye-icon-reg" data-lucide="eye" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button type="submit" class="w-full py-3 px-6 rounded-full bg-[#463EC7] hover:bg-indigo-700 text-white font-extrabold shadow-lg transition-all flex items-center justify-center space-x-2 text-sm">
+                  <span>Create Account</span>
+                  <i data-lucide="user-check" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="mt-4 text-center text-xs font-semibold text-white/90">
+            Already registered? <button type="button" onclick="showLoginPage()" class="underline font-bold text-amber-300 hover:text-white">Sign In</button>
+          </div>
+        </div>
+
+        <!-- Right Side: White 3D Emblem Box -->
+        <div class="w-full md:w-1/2 bg-white p-8 flex flex-col items-center justify-center text-center">
+          <div class="w-56 h-56 mb-4 flex items-center justify-center">
+            <img src="Photo.png" alt="Radha Raman 3D Emblem" class="w-full h-full object-contain rounded-2xl shadow-md">
+          </div>
+          <h2 class="text-xl font-extrabold text-slate-900 font-display">Radha Raman Education Institute</h2>
+          <p class="text-xs text-amber-700 font-bold mt-1 uppercase tracking-widest">Sirasana • Academic Registration</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Dashboard Application Wrapper -->
+    <div id="app-main" class="h-full flex flex-col md:flex-row overflow-hidden hidden">
+      
+      <!-- Mobile Backdrop Overlay -->
+      <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 z-30 hidden md:hidden backdrop-blur-sm"></div>
+
+      <!-- Sidebar Navigation -->
+      <aside id="sidebar-container" class="fixed inset-y-0 left-0 z-40 w-64 bg-[#8A25B1] flex flex-col shrink-0 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out shadow-2xl">
+        
+        <!-- Top Logo Box -->
+        <div class="p-3 border-b border-purple-700">
+          <div class="bg-white rounded-xl p-2.5 flex items-center space-x-3 shadow-md">
+            <div class="w-10 h-10 shrink-0">
+              <img src="logo.png" alt="Logo" class="w-full h-full object-contain">
+            </div>
+            <div class="min-w-0">
+              <h2 class="text-xs font-extrabold font-display text-slate-900 leading-tight truncate" id="sidebar-app-name">Radha Raman</h2>
+              <p class="text-[10px] text-purple-800 font-bold leading-tight truncate" id="sidebar-app-sub">Education Institute</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav Items -->
+        <nav class="p-3 space-y-1 flex-1 overflow-y-auto custom-scrollbar">
+          
+          <button onclick="switchFrame('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all bg-[#A439C9] text-white shadow-md">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            <span>Dashboard</span>
+          </button>
+
+          <button onclick="switchFrame('teachers')" id="nav-teachers" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>Teacher Management</span>
+          </button>
+
+          <button onclick="switchFrame('students')" id="nav-students" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+            <span>Student Management</span>
+          </button>
+
+          <button onclick="switchFrame('attendance')" id="nav-attendance" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="calendar-check" class="w-4 h-4"></i>
+            <span>Attendance</span>
+          </button>
+
+          <button onclick="switchFrame('fees')" id="nav-fees" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="credit-card" class="w-4 h-4"></i>
+            <span>Fee Management</span>
+          </button>
+
+          <button onclick="switchFrame('marks')" id="nav-marks" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="folder" class="w-4 h-4"></i>
+            <span>Marks Management</span>
+          </button>
+
+          <button onclick="switchFrame('reports')" id="nav-reports" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Report cards</span>
+          </button>
+
+          <button onclick="switchFrame('settings')" id="nav-settings" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            <span>Settings</span>
+          </button>
+
+          <div class="pt-6">
+            <button onclick="logout()" class="w-full flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-purple-950/40 hover:bg-purple-950/80 transition-all">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- User Profile Footer -->
+        <div class="p-3 border-t border-purple-700 bg-purple-950/30 flex items-center space-x-3">
+          <div id="user-avatar" class="w-8 h-8 rounded-full bg-amber-400 text-slate-950 font-extrabold flex items-center justify-center text-xs">
+            AD
+          </div>
+          <div class="flex-1 min-w-0">
+            <p id="user-name" class="text-xs font-bold text-white truncate">Administrator</p>
+            <p id="user-role-tag" class="text-[10px] text-amber-300 truncate">Super Admin</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="flex-1 flex flex-col min-w-0 bg-[#C76E1A] overflow-y-auto custom-scrollbar">
+        
+        <!-- Top Bar Header -->
+        <header class="h-16 px-4 sm:px-6 flex items-center justify-between sticky top-0 bg-[#C76E1A] z-20 shadow-md">
+          <div class="flex items-center space-x-3">
+            <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-xl text-white hover:bg-black/20 focus:outline-none">
+              <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="px-5 py-2 rounded-2xl bg-black/15 border border-white/20">
+              <h2 id="current-frame-title" class="text-base sm:text-lg font-extrabold font-display text-white">Dashboard Overview</h2>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2 sm:space-x-3">
+            <!-- 📲 Install App Button (PWA) -->
+            <button id="pwa-install-btn" onclick="installPWA()" class="px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs flex items-center space-x-1.5 shadow transition-all hidden">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Install App</span>
+            </button>
+
+            <!-- Language Switcher Pill -->
+            <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-xs font-bold text-amber-300 flex items-center space-x-1.5 transition-colors">
+              <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+              <span id="header-lang-label">हिन्दी</span>
+            </button>
+
+            <!-- 🔔 Clickable Notifications Bell Icon -->
+            <button onclick="openNotificationsModal()" class="p-2 text-white hover:bg-black/20 rounded-xl transition-colors relative cursor-pointer" title="Notifications">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span id="notif-badge-dot" class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-[#C76E1A]"></span>
+            </button>
+          </div>
+        </header>
+
+        <!-- FRAME CONTENTS CONTAINER -->
+        <div class="p-4 sm:p-6 flex-1 space-y-6">
+
+          <!-- Frame 2: Dashboard Overview -->
+          <div id="content-dashboard" class="space-y-6">
+            
+            <div class="flex flex-col lg:flex-row gap-6">
+              
+              <!-- Left Grid Column -->
+              <div class="flex-1 space-y-6">
+                
+                <!-- Welcome Banner Card -->
+                <div class="p-5 rounded-2xl bg-black/15 border border-white/20 flex items-center justify-between">
+                  <div>
+                    <h2 class="text-lg font-extrabold text-white flex items-center space-x-2" id="dash-welcome-text">
+                      <span>Welcome to Radha Raman Smart Management. Better Education.</span>
+                      <span class="text-2xl">🙏</span>
+                    </h2>
+                  </div>
+                </div>
+
+                <!-- 2x2 Stat Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  
+                  <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20 flex justify-between items-center">
+                    <div>
+                      <p class="text-xs font-bold text-white/90 uppercase tracking-wider" id="lbl-total-students">Total Students</p>
+                      <h3 class="text-3xl font-extrabold text-white mt-1" id="dash-total-students">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-black/15 flex items-center justify-center text-white">
+                      <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20 flex justify-between items-center">
+                    <div>
+                      <p class="text-xs font-bold text-white/90 uppercase tracking-wider" id="lbl-total-teachers">Total Teachers</p>
+                      <h3 class="text-3xl font-extrabold text-white mt-1" id="dash-total-teachers">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-black/15 flex items-center justify-center text-white">
+                      <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20 flex justify-between items-center">
+                    <div>
+                      <p class="text-xs font-bold text-white/90 uppercase tracking-wider" id="lbl-todays-att">Today's Attendance</p>
+                      <h3 class="text-3xl font-extrabold text-white mt-1" id="dash-attendance-rate">100 %</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-black/15 flex items-center justify-center text-white">
+                      <i data-lucide="calendar-check" class="w-6 h-6"></i>
+                    </div>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20 flex justify-between items-center">
+                    <div>
+                      <p class="text-xs font-bold text-white/90 uppercase tracking-wider" id="lbl-no-classes">No. of Classes</p>
+                      <h3 class="text-3xl font-extrabold text-white mt-1" id="dash-total-classes">7</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-black/15 flex items-center justify-center text-white">
+                      <i data-lucide="monitor" class="w-6 h-6"></i>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Notice Section Box -->
+                <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-extrabold text-white uppercase" id="lbl-notice-sec">Notice Section :-</h4>
+                    <div class="flex items-center space-x-3">
+                      <button onclick="openEditNoticeModal()" id="btn-edit-notice" class="text-xs font-bold text-amber-300 hover:underline flex items-center space-x-1">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        <span>Edit Notice</span>
+                      </button>
+                      <button onclick="openNotificationsModal()" class="text-xs font-bold text-white hover:underline">View All Notifications →</button>
+                    </div>
+                  </div>
+                  <p class="text-sm font-bold text-amber-100 cursor-pointer" onclick="openEditNoticeModal()" id="dash-display-notice">
+                    Parent-Teacher Meeting - Welcome to Radha Raman Education Institute! All parents are invited to the PTM.
+                  </p>
+                </div>
+
+              </div>
+
+              <!-- Right Column: Emblem Photo.png & Quick Actions -->
+              <div class="w-full lg:w-80 space-y-6">
+                
+                <div class="bg-white rounded-2xl p-4 flex items-center justify-center shadow-lg">
+                  <img src="Photo.png" alt="Radha Raman Emblem" class="w-48 h-48 object-contain">
+                </div>
+
+                <!-- Quick Actions White Card (Hidden for Student role) -->
+                <div id="quick-actions-card" class="bg-white rounded-2xl p-5 text-slate-900 shadow-lg space-y-3">
+                  <h4 class="text-sm font-extrabold text-slate-900 border-b border-slate-200 pb-2" id="lbl-quick-actions">Quick Actions</h4>
+                  
+                  <button onclick="openAddStudentModal()" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-100 hover:bg-purple-50 text-xs font-bold text-slate-800 transition-all">
+                    <span id="act-add-student">Add student</span>
+                    <i data-lucide="user-plus" class="w-4 h-4 text-purple-700"></i>
+                  </button>
+
+                  <button onclick="openDeleteStudentModal()" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-100 hover:bg-purple-50 text-xs font-bold text-slate-800 transition-all">
+                    <span id="act-del-student">Delete student</span>
+                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
+                  </button>
+
+                  <button onclick="openEditStudentModal()" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-100 hover:bg-purple-50 text-xs font-bold text-slate-800 transition-all">
+                    <span id="act-edit-student">Edit student</span>
+                    <i data-lucide="edit-3" class="w-4 h-4 text-amber-600"></i>
+                  </button>
+
+                  <button onclick="switchFrame('students')" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-100 hover:bg-purple-50 text-xs font-bold text-slate-800 transition-all">
+                    <span id="act-view-student">View student</span>
+                    <i data-lucide="eye" class="w-4 h-4 text-indigo-600"></i>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Frame 3: Student Management Directory -->
+          <div id="content-students" class="space-y-6 hidden">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="w-full sm:w-96 relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-white/60 pointer-events-none">
+                  <i data-lucide="search" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="student-search" oninput="renderStudents()" class="w-full pl-10 pr-4 py-2.5 rounded-full bg-black/15 border border-white/20 text-white placeholder-white/60 text-xs font-semibold" placeholder="Search student name or roll...">
+              </div>
+
+              <button onclick="openAddStudentModal()" id="btn-add-student-top" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#D97E25] hover:bg-amber-600 border border-white/30 text-white font-extrabold text-xs flex items-center justify-center space-x-1 shadow-md">
+                <span id="btn-add-student-label">+ Add student</span>
+              </button>
+            </div>
+
+            <div class="rounded-2xl border border-white/20 overflow-x-auto bg-black/10 custom-scrollbar">
+              <div class="min-w-[800px]">
+                <div class="grid grid-cols-9 gap-2 p-3 bg-black/20 text-xs font-extrabold text-white text-center border-b border-white/20">
+                  <div id="th-roll">Roll number</div>
+                  <div id="th-name">Name</div>
+                  <div id="th-class">Class</div>
+                  <div id="th-father">Father's name</div>
+                  <div id="th-mobile">Mobile No.</div>
+                  <div id="th-gender">Gender</div>
+                  <div id="th-dob">Date of birth</div>
+                  <div id="th-address">Address</div>
+                  <div id="th-actions">Actions</div>
+                </div>
+
+                <div id="students-table-body" class="divide-y divide-white/10">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Frame 4: Faculty & Teacher Directory -->
+          <div id="content-teachers" class="space-y-6 hidden">
+            
+            <div class="flex flex-col sm:flex-row items-start justify-between gap-6">
+              
+              <div class="flex-1 space-y-4 w-full">
+                <h3 class="text-lg font-extrabold text-white flex items-center space-x-2">
+                  <span id="lbl-tch-mgmt">Teacher management</span>
+                  <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </h3>
+
+                <div id="teachers-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Right Stack Actions -->
+              <div id="teacher-actions-sidebar" class="w-full sm:w-64 space-y-3 shrink-0">
+                <button onclick="openAddTeacherModal()" class="w-full p-3 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 text-xs font-bold text-white flex items-center justify-between shadow">
+                  <span id="act-add-teacher">Add teacher</span>
+                  <span class="text-lg">👩‍🏫</span>
+                </button>
+
+                <button onclick="openTeacherDetailsModal()" class="w-full p-3 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 text-xs font-bold text-white flex items-center justify-between shadow">
+                  <span id="act-view-teacher">View teacher</span>
+                  <i data-lucide="search" class="w-4 h-4 text-white"></i>
+                </button>
+
+                <button onclick="openDeleteTeacherModal()" class="w-full p-3 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 text-xs font-bold text-white flex items-center justify-between shadow">
+                  <span id="act-del-teacher">Delete teacher</span>
+                  <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Frame 5: Daily Student Attendance -->
+          <div id="content-attendance" class="space-y-6 hidden">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <h3 class="text-lg font-extrabold text-white" id="lbl-att-marking">Attendance Marking</h3>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openAttendanceHistoryModal()" class="px-4 py-2 rounded-full bg-purple-900/60 hover:bg-purple-900/90 text-white font-extrabold text-xs flex items-center space-x-1.5 shadow border border-white/20">
+                  <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                  <span>Attendance History</span>
+                </button>
+
+                <button onclick="openHolidayModal()" class="px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs flex items-center space-x-1.5 shadow">
+                  <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+                  <span>Mark Holiday</span>
+                </button>
+
+                <button onclick="deleteAttendanceForCurrentDate()" class="px-4 py-2 rounded-full bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs flex items-center space-x-1.5 shadow">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <span>Delete Date</span>
+                </button>
+
+                <button onclick="saveAttendance()" id="btn-save-attendance" class="px-5 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center space-x-1.5 shadow-md">
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                  <span id="btn-save-att">Save attendance</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-black/15 border border-white/20 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center space-x-4">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-white/80 mb-1" id="lbl-sel-class">Select class</label>
+                  <select id="att-class-filter" onchange="loadAttendanceRoster()" class="px-4 py-2 rounded-xl bg-white text-slate-900 text-xs font-bold">
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-white/80 mb-1" id="lbl-att-date">Date</label>
+                  <input type="date" id="att-date-input" onchange="loadAttendanceRoster()" class="px-4 py-2 rounded-xl bg-white text-slate-900 text-xs font-bold">
+                </div>
+              </div>
+
+              <div class="text-xs font-extrabold text-white space-x-4 bg-black/20 px-4 py-2 rounded-xl border border-white/10 flex items-center">
+                <span>Total :- <strong id="att-total-cnt">0</strong></span>
+                <span>Present :- <strong id="att-present-cnt" class="text-emerald-300">0</strong></span>
+                <span>Absent :- <strong id="att-absent-cnt" class="text-rose-300">0</strong></span>
+                <span id="att-status-badge" class="px-2.5 py-1 rounded-full text-[10px] bg-amber-400 text-slate-950">Saved</span>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/20 overflow-hidden bg-black/10">
+              <div class="grid grid-cols-4 gap-2 p-3 bg-black/20 text-xs font-extrabold text-white text-center border-b border-white/20">
+                <div>Roll number</div>
+                <div>Student name</div>
+                <div>Class</div>
+                <div>Attendance status</div>
+              </div>
+
+              <div id="attendance-roster-container" class="divide-y divide-white/10">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Frame 6: Fee Management & Ledger -->
+          <div id="content-fees" class="space-y-6 hidden">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-bold text-white/90 uppercase tracking-wider">Total Yearly Target</p>
+                  <h3 class="text-2xl font-extrabold text-white mt-1" id="fee-target-val">₹ 5,00,000</h3>
+                </div>
+                <button onclick="openEditFeeTargetModal()" id="btn-edit-fee-target" class="p-2 rounded-xl bg-black/20 hover:bg-black/30 text-amber-300 font-bold text-xs shadow" title="Edit Yearly Target">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-5 rounded-2xl bg-emerald-700 border border-white/20">
+                <p class="text-xs font-bold text-white/90 uppercase tracking-wider">Total Fee Collected</p>
+                <h3 class="text-2xl font-extrabold text-white mt-1" id="fee-collected-val">₹ 0</h3>
+              </div>
+              <div class="p-5 rounded-2xl bg-rose-700 border border-white/20">
+                <p class="text-xs font-bold text-white/90 uppercase tracking-wider">Total Pending Fee</p>
+                <h3 class="text-2xl font-extrabold text-white mt-1" id="fee-pending-val">₹ 0</h3>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-extrabold text-white" id="lbl-fee-title">Fee Management & Collections</h3>
+              <button onclick="openRecordFeeModal()" id="btn-record-fee" class="px-6 py-2.5 rounded-full bg-[#463EC7] hover:bg-indigo-700 text-white font-extrabold text-xs shadow-md">
+                + Record fee payment
+              </button>
+            </div>
+
+            <div class="rounded-2xl border border-white/20 overflow-hidden bg-black/10">
+              <div class="grid grid-cols-6 gap-2 p-3 bg-black/20 text-xs font-extrabold text-white text-center border-b border-white/20">
+                <div>Student name</div>
+                <div>Total yearly fee</div>
+                <div>Paid amount</div>
+                <div>Remaining amount</div>
+                <div>Payment date</div>
+                <div>Actions</div>
+              </div>
+              <div id="fees-list-container" class="divide-y divide-white/10 text-xs font-semibold text-white">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Frame 7: Marks Management -->
+          <div id="content-marks" class="space-y-6 hidden">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="p-5 rounded-2xl bg-[#D97E25] border border-white/20">
+                <p class="text-xs font-bold text-white/90 uppercase tracking-wider">Total Exams Conducted</p>
+                <h3 class="text-2xl font-extrabold text-white mt-1">Quarterly Exam 2026</h3>
+              </div>
+              <div class="p-5 rounded-2xl bg-indigo-800 border border-white/20">
+                <p class="text-xs font-bold text-white/90 uppercase tracking-wider">Class Average Score</p>
+                <h3 class="text-2xl font-extrabold text-white mt-1" id="marks-avg-score">--</h3>
+              </div>
+              <div class="p-5 rounded-2xl bg-purple-800 border border-white/20">
+                <p class="text-xs font-bold text-white/90 uppercase tracking-wider">Top Performer</p>
+                <h3 class="text-2xl font-extrabold text-amber-300 mt-1" id="marks-top-performer">--</h3>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <h3 class="text-lg font-extrabold text-white" id="lbl-marks-title">Academic Marks & Grades</h3>
+              <div class="flex items-center space-x-3">
+                <button onclick="openDeleteMarksModal()" id="btn-del-marks" class="px-5 py-2.5 rounded-full bg-rose-700 hover:bg-rose-600 text-white font-extrabold text-xs shadow-md">
+                  🗑️ Delete marks
+                </button>
+                <button onclick="openEditMarksModal()" id="btn-edit-marks" class="px-6 py-2.5 rounded-full bg-[#463EC7] hover:bg-indigo-700 text-white font-extrabold text-xs shadow-md">
+                  + Edit marks and grades
+                </button>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/20 overflow-hidden bg-black/10">
+              <div class="grid grid-cols-7 gap-2 p-3 bg-black/20 text-xs font-extrabold text-white text-center border-b border-white/20">
+                <div>Roll number</div>
+                <div>Class</div>
+                <div>Subject</div>
+                <div>Exam name</div>
+                <div>Marks obtained</div>
+                <div>Grade</div>
+                <div>Actions</div>
+              </div>
+              <div id="marks-sheet-container" class="divide-y divide-white/10 text-xs font-semibold text-white">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Frame 8: Digital Report Card -->
+          <div id="content-reports" class="space-y-6 hidden">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center space-x-3 w-full sm:w-auto">
+                <label class="text-xs font-extrabold text-white">Student name :-</label>
+                <select id="report-card-student-select" onchange="generateReportCard()" class="px-4 py-2 rounded-xl bg-amber-200 text-slate-950 font-extrabold text-xs min-w-48 shadow">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button onclick="openSignatureModal()" id="btn-add-signature" class="px-4 py-2.5 rounded-full bg-purple-700 hover:bg-purple-800 text-white font-extrabold text-xs flex items-center space-x-2 shadow-md">
+                  <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                  <span>Sign Report Card</span>
+                </button>
+
+                <button onclick="window.print()" class="px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center space-x-2 shadow-md">
+                  <i data-lucide="printer" class="w-4 h-4"></i>
+                  <span>Print Report Card</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Digital Report Card Container -->
+            <div id="printable-report-card" class="bg-white text-slate-900 p-8 rounded-3xl shadow-2xl max-w-3xl mx-auto border-4 border-amber-500 relative">
+              
+              <!-- School Header Row -->
+              <div class="flex justify-between items-start border-b-2 border-slate-300 pb-4 mb-4">
+                <div>
+                  <h2 class="text-xl font-extrabold font-display text-indigo-950 uppercase" id="rc-header-title">Radha Raman</h2>
+                  <p class="text-xs font-extrabold text-purple-900" id="rc-header-sub">Education Institute , Sirasana (Degana), Rajasthan</p>
+                </div>
+                
+                <div class="text-right">
+                  <p class="text-xs font-bold text-slate-600">Annual Performance Card</p>
+                  <p class="text-xs font-extrabold text-slate-900">Academic Session 2026-2027</p>
+                </div>
+
+                <div class="w-16 h-16 shrink-0 border border-slate-300 p-1 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                  <img src="logo.png" alt="Logo" class="w-full h-full object-contain">
+                </div>
+              </div>
+
+              <!-- Student Details Box -->
+              <div class="bg-slate-100 p-4 rounded-2xl border border-slate-300 grid grid-cols-2 gap-3 text-xs mb-6 font-bold">
+                <div>Roll number :- <span id="rc-roll" class="font-extrabold text-purple-900">--</span></div>
+                <div>Father name :- <span id="rc-father" class="font-extrabold text-purple-900">--</span></div>
+                <div>Student name :- <span id="rc-student-name" class="font-extrabold text-purple-900">--</span></div>
+                <div>Class :- <span id="rc-class" class="font-extrabold text-purple-900">--</span></div>
+              </div>
+
+              <!-- Marks Table -->
+              <table class="w-full text-xs border-collapse border border-indigo-300 mb-8">
+                <thead class="bg-indigo-50 text-indigo-950 font-extrabold">
+                  <tr>
+                    <th class="p-3 border border-indigo-300 text-left">Subject name</th>
+                    <th class="p-3 border border-indigo-300 text-center">Total Marks</th>
+                    <th class="p-3 border border-indigo-300 text-center">Marks obtained</th>
+                    <th class="p-3 border border-indigo-300 text-center">Grade</th>
+                  </tr>
+                </thead>
+                <tbody id="rc-marks-body" class="font-semibold text-slate-800">
+                  <!-- Generated dynamically -->
+                </tbody>
+              </table>
+
+              <!-- Footer Digital Signatures -->
+              <div class="grid grid-cols-2 gap-8 text-center text-xs font-extrabold pt-4 border-t border-slate-200">
+                <div>
+                  <div id="rc-teacher-sig-container" class="h-16 flex items-center justify-center mb-1">
+                    <span class="text-slate-400 font-normal">✏️ Click "Sign Report Card" to add</span>
+                  </div>
+                  <p class="text-slate-800 border-t border-slate-300 pt-1">Class Teacher Signature</p>
+                </div>
+                <div>
+                  <div id="rc-principal-sig-container" class="h-16 flex items-center justify-center mb-1">
+                    <span class="text-slate-400 font-normal">✏️ Click "Sign Report Card" to add</span>
+                  </div>
+                  <p class="text-slate-800 border-t border-slate-300 pt-1">Principal Signature</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Frame 9: Settings Screen -->
+          <div id="content-settings" class="space-y-6 hidden">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <!-- Account Settings Card -->
+              <div class="bg-white rounded-3xl p-5 text-slate-900 shadow-xl space-y-4">
+                <div class="px-4 py-2 rounded-xl bg-amber-400 font-extrabold text-xs flex justify-between items-center">
+                  <span>Account Settings</span>
+                  <i data-lucide="user-cog" class="w-4 h-4"></i>
+                </div>
+                
+                <div class="space-y-3 text-xs font-bold">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-600">User name</span>
+                    <span class="bg-amber-100 px-3 py-1 rounded-full text-slate-900" id="set-admin-name">Administrator</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-600">Email ID</span>
+                    <span class="bg-amber-100 px-3 py-1 rounded-full text-slate-900" id="set-admin-email">--</span>
+                  </div>
+                </div>
+
+                <button onclick="openEditAccountModal()" class="w-full py-2.5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white font-extrabold text-xs shadow flex items-center justify-center space-x-1">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  <span>Edit Account</span>
+                </button>
+              </div>
+
+              <!-- Language Settings Card -->
+              <div class="bg-white rounded-3xl p-5 text-slate-900 shadow-xl space-y-4">
+                <div class="px-4 py-2 rounded-xl bg-amber-400 font-extrabold text-xs flex justify-between items-center">
+                  <span>Language</span>
+                  <i data-lucide="globe" class="w-4 h-4"></i>
+                </div>
+
+                <div class="space-y-2 text-xs font-bold">
+                  <label class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100 cursor-pointer hover:bg-slate-200 transition-colors">
+                    <span>English <span class="text-emerald-600 font-extrabold">(Default)</span></span>
+                    <input type="radio" name="lang_radio" value="en" onchange="setLanguage('en')" id="lang-radio-en" checked class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+                  </label>
+
+                  <label class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100 cursor-pointer hover:bg-slate-200 transition-colors">
+                    <span>हिन्दी <span class="text-slate-500">(Hindi Mode)</span></span>
+                    <input type="radio" name="lang_radio" value="hi" onchange="setLanguage('hi')" id="lang-radio-hi" class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+                  </label>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-indigo-50 text-[#463EC7] text-[11px] font-bold border border-indigo-100">
+                  Choose your preferred language for the dashboard.
+                </div>
+              </div>
+
+              <!-- School Information Card -->
+              <div class="bg-white rounded-3xl p-5 text-slate-900 shadow-xl space-y-4">
+                <div class="px-4 py-2 rounded-xl bg-amber-400 font-extrabold text-xs flex justify-between items-center">
+                  <span id="lbl-sch-info">School Information</span>
+                  <i data-lucide="home" class="w-4 h-4"></i>
+                </div>
+
+                <div class="space-y-3 text-xs font-bold">
+                  <div>
+                    <span class="text-slate-500 text-[10px] block uppercase" id="lbl-sch-name">School name</span>
+                    <span class="text-slate-900 font-extrabold text-sm" id="disp-sch-name">Radha Raman Education Institute</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 text-[10px] block uppercase" id="lbl-sch-addr">Address</span>
+                    <span class="text-slate-800 font-bold" id="disp-sch-address">Sirasana, Degana, Nagaur, Rajasthan</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 text-[10px] block uppercase" id="lbl-sch-phone">Contact no.</span>
+                    <span class="text-slate-800 font-bold" id="disp-sch-contact">+91 98765 43210</span>
+                  </div>
+                </div>
+
+                <button onclick="openEditSchoolModal()" id="btn-edit-school-info" class="w-full py-2.5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white font-extrabold text-xs shadow flex items-center justify-center space-x-1">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  <span id="btn-edit-sch-info">Edit School Info</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Admin Dynamic Classes & Subjects Configuration Card -->
+            <div id="admin-config-section" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <!-- Manage Classes Box -->
+              <div class="bg-white rounded-3xl p-6 text-slate-900 shadow-xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                  <h4 class="text-sm font-extrabold text-purple-900 flex items-center space-x-2">
+                    <i data-lucide="layers" class="w-4 h-4 text-purple-700"></i>
+                    <span>Admin Class Configuration</span>
+                  </h4>
+                  <button onclick="openAddClassModal()" class="px-3 py-1 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-extrabold shadow">
+                    + Add Class
+                  </button>
+                </div>
+
+                <div id="configured-classes-pills" class="flex flex-wrap gap-2 text-xs font-bold">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Manage Subjects Box -->
+              <div class="bg-white rounded-3xl p-6 text-slate-900 shadow-xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                  <h4 class="text-sm font-extrabold text-purple-900 flex items-center space-x-2">
+                    <i data-lucide="book-open" class="w-4 h-4 text-purple-700"></i>
+                    <span>Admin Subject Configuration</span>
+                  </h4>
+                  <button onclick="openAddSubjectModal()" class="px-3 py-1 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-extrabold shadow">
+                    + Add Subject
+                  </button>
+                </div>
+
+                <div id="configured-subjects-pills" class="flex flex-wrap gap-2 text-xs font-bold">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- POPUP MODALS -->
+
+  <!-- Edit Account Modal -->
+  <div id="modal-edit-account" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-sm font-extrabold text-purple-900">Edit Account</h3>
+        <button onclick="closeModal('modal-edit-account')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveAccount(event)" class="space-y-3 text-xs font-bold">
+        <div>
+          <label class="block mb-1 text-slate-700">Name</label>
+          <input type="text" id="acc-name" required value="" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold" placeholder="Enter name">
+        </div>
+        <div>
+          <label class="block mb-1 text-slate-700">Email ID</label>
+          <input type="email" id="acc-email" required value="" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold" placeholder="Enter custom email">
+        </div>
+        <div>
+          <label class="block mb-1 text-slate-700">New Password</label>
+          <input type="password" id="acc-pass" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold" placeholder="Enter new password">
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-edit-account')" class="py-1.5 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-1.5 px-4 rounded-xl bg-[#463EC7] text-white text-xs font-bold shadow">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add / Edit Student Popup Modal -->
+  <div id="modal-student" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-lg rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900" id="modal-student-title">Add Student</h3>
+        <button onclick="closeModal('modal-student')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveStudent(event)" class="space-y-3 text-xs font-bold">
+        <input type="hidden" id="stud-edit-id" value="">
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-roll">Roll Number *</label>
+            <input type="number" id="stud-roll-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="101">
+          </div>
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-name">Student Name *</label>
+            <input type="text" id="stud-name-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="Enter full name">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-class">Class *</label>
+            <select id="stud-class-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-gender">Gender *</label>
+            <select id="stud-gender-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-father">Father's Name *</label>
+            <input type="text" id="stud-father-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="Father's name">
+          </div>
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-mother">Mother's Name</label>
+            <input type="text" id="stud-mother-input" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="Mother's name">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-mobile">Mobile Number *</label>
+            <input type="tel" id="stud-mobile-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="10-digit mobile number">
+          </div>
+          <div>
+            <label class="block text-slate-700 mb-1" id="lbl-stu-dob">Date of Birth</label>
+            <input type="date" id="stud-dob-input" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-700 mb-1" id="lbl-stu-address">Address</label>
+          <input type="text" id="stud-address-input" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="Residential address">
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-student')" class="py-2 px-5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold" id="btn-cancel-stu">Cancel</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-bold shadow" id="btn-save-stu">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Student Popup Modal -->
+  <div id="modal-delete-student" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-rose-700 flex items-center space-x-2" id="modal-del-student-title">
+          <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
+          <span>Delete Student</span>
+        </h3>
+        <button onclick="closeModal('modal-delete-student')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleDeleteStudentSubmit(event)" class="space-y-4 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1" id="lbl-select-del-stu">Select Student to Delete *</label>
+          <select id="del-student-select" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-rose-500">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <p class="text-[11px] text-rose-600 font-semibold" id="msg-del-stu-warn">⚠️ Warning: This action cannot be undone.</p>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-delete-student')" class="py-2 px-4 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold" id="btn-cancel-del">Cancel</button>
+          <button type="submit" class="py-2 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow" id="btn-confirm-del">Delete Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Digital Signature Modal -->
+  <div id="modal-signature" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900 flex items-center space-x-2">
+          <i data-lucide="pen-tool" class="w-4 h-4 text-purple-700"></i>
+          <span>Digital Signature</span>
+        </h3>
+        <button onclick="closeModal('modal-signature')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleApplySignature(event)" class="space-y-4 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Select Signatory Role</label>
+          <select id="sig-role-select" required onchange="onSigRoleChange()" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+            <option value="teacher">Class Teacher</option>
+            <option value="principal">Principal</option>
+          </select>
+        </div>
+
+        <div id="sig-class-select-box">
+          <label class="block text-slate-700 mb-1">Target Class *</label>
+          <select id="sig-class-select" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-700 mb-1">Type Signature Text</label>
+          <input type="text" id="sig-text-input" placeholder="e.g. Dr. Priya Raman" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold text-sm">
+        </div>
+
+        <div>
+          <label class="block text-slate-700 mb-1">Or Draw Signature below</label>
+          <div class="border-2 border-dashed border-slate-300 rounded-2xl p-1 bg-slate-50 relative">
+            <canvas id="sig-canvas" width="380" height="120" class="w-full h-28 bg-white rounded-xl cursor-crosshair"></canvas>
+            <button type="button" onclick="clearSignatureCanvas()" class="absolute top-2 right-2 px-2 py-1 bg-slate-200 hover:bg-slate-300 text-[10px] font-bold rounded-lg">Clear</button>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-signature')" class="py-2 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-extrabold shadow">Apply Signature</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Add Class Modal -->
+  <div id="modal-add-class" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-sm font-extrabold text-purple-900">Add New Class</h3>
+        <button onclick="closeModal('modal-add-class')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveNewClass(event)" class="space-y-3 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Class Name *</label>
+          <input type="text" id="new-class-input" required placeholder="e.g. 6th, 10th-A" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+        </div>
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-add-class')" class="py-1.5 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-1.5 px-4 rounded-xl bg-[#463EC7] text-white text-xs font-bold shadow">Add Class</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Add Subject Modal -->
+  <div id="modal-add-subject" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-sm font-extrabold text-purple-900">Add New Subject</h3>
+        <button onclick="closeModal('modal-add-subject')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveNewSubject(event)" class="space-y-3 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Subject Name *</label>
+          <input type="text" id="new-subject-input" required placeholder="e.g. Social Science, Sanskrit" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+        </div>
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-add-subject')" class="py-1.5 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-1.5 px-4 rounded-xl bg-[#463EC7] text-white text-xs font-bold shadow">Add Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notifications Popup Modal -->
+  <div id="modal-notifications" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative text-slate-900 border border-slate-200">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold flex items-center space-x-2 text-purple-900">
+          <i data-lucide="bell" class="w-5 h-5 text-purple-700"></i>
+          <span>Notifications</span>
+        </h3>
+        <button onclick="closeModal('modal-notifications')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div id="notif-list-container" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="pt-4 border-t border-slate-200 mt-4 flex items-center justify-between text-xs font-bold text-purple-700">
+        <button onclick="markAllNotificationsRead()" class="hover:underline flex items-center space-x-1">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          <span>Mark all as read</span>
+        </button>
+        <button onclick="closeModal('modal-notifications')" class="hover:underline">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Teacher Modal -->
+  <div id="modal-add-teacher" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900">Add Teacher</h3>
+        <button onclick="closeModal('modal-add-teacher')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveTeacher(event)" class="space-y-3 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Full Name *</label>
+          <input type="text" id="tch-name-input" required placeholder="e.g. Dr. Ramesh Sharma" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1">Subject *</label>
+          <select id="tch-subject-input" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1">Qualification</label>
+          <input type="text" id="tch-qual-input" placeholder="e.g. M.Sc, B.Ed" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1">Mobile Number *</label>
+          <input type="tel" id="tch-mobile-input" required placeholder="10-digit mobile number" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1">Email ID</label>
+          <input type="email" id="tch-email-input" placeholder="teacher@radharaman.edu" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-add-teacher')" class="py-2 px-4 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-bold shadow">Save Teacher</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Teachers Modal -->
+  <div id="modal-view-teachers" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900 flex items-center space-x-2">
+          <i data-lucide="users" class="w-5 h-5 text-purple-700"></i>
+          <span>Faculty & Teacher Directory</span>
+        </h3>
+        <button onclick="closeModal('modal-view-teachers')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div id="view-teachers-list" class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div class="pt-4 border-t border-slate-200 flex justify-end">
+        <button type="button" onclick="closeModal('modal-view-teachers')" class="py-2 px-5 rounded-xl bg-[#463EC7] text-white text-xs font-bold shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Teacher Modal -->
+  <div id="modal-delete-teacher" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-rose-700 flex items-center space-x-2">
+          <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
+          <span>Delete Teacher</span>
+        </h3>
+        <button onclick="closeModal('modal-delete-teacher')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleDeleteTeacherSubmit(event)" class="space-y-4 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Select Teacher to Delete *</label>
+          <select id="del-teacher-select" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-rose-500">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <p class="text-[11px] text-rose-600 font-semibold">⚠️ Warning: This action cannot be undone.</p>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-delete-teacher')" class="py-2 px-4 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow">Delete Teacher</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit School Info Modal -->
+  <div id="modal-edit-school" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900" id="modal-sch-title">Edit School Information</h3>
+        <button onclick="closeModal('modal-edit-school')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveSchoolInfo(event)" class="space-y-3 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1" id="lbl-edit-sch-name">School Name</label>
+          <input type="text" id="sch-name-input" required value="Radha Raman Education Institute" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1" id="lbl-edit-sch-sub">Subtitle / Tagline</label>
+          <input type="text" id="sch-sub-input" required value="Education Institute" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1" id="lbl-edit-sch-addr">Address</label>
+          <input type="text" id="sch-addr-input" required value="Sirasana, Degana, Nagaur, Rajasthan" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1" id="lbl-edit-sch-phone">Contact Number</label>
+          <input type="text" id="sch-phone-input" required value="+91 98765 43210" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-edit-school')" class="py-2 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold" id="btn-cancel-sch">Cancel</button>
+          <button type="submit" class="py-2 px-4 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-bold shadow" id="btn-save-sch">Save Info</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Record fee payment Modal -->
+  <div id="modal-fee-payment" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-sm font-extrabold text-purple-900" id="modal-fee-title">Record Fee Payment</h3>
+        <button onclick="closeModal('modal-fee-payment')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveFeePayment(event)" class="space-y-3 text-xs font-bold">
+        <input type="hidden" id="fee-edit-idx" value="">
+        <div>
+          <label class="block mb-1 text-slate-700">Student name</label>
+          <input type="text" id="fee-stud-name" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold" placeholder="Enter student name">
+        </div>
+        <div>
+          <label class="block mb-1 text-slate-700">Total Yearly Fee (₹)</label>
+          <input type="text" id="fee-total-yearly" value="₹ 15,000" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold" placeholder="₹ 15,000">
+        </div>
+        <div>
+          <label class="block mb-1 text-slate-700">Payment amount (₹)</label>
+          <input type="number" id="fee-amount" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold" placeholder="15000">
+        </div>
+        <div>
+          <label class="block mb-1 text-slate-700">Payment date</label>
+          <input type="date" id="fee-date" required value="2026-09-28" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold">
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-fee-payment')" class="py-1.5 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-1.5 px-4 rounded-xl bg-[#463EC7] text-white text-xs font-bold shadow">Save Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Notice Modal -->
+  <div id="modal-edit-notice" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900 flex items-center space-x-2">
+          <i data-lucide="edit-3" class="w-4 h-4 text-purple-700"></i>
+          <span>Edit Announcement Notice</span>
+        </h3>
+        <button onclick="closeModal('modal-edit-notice')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveNotice(event)" class="space-y-4 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Notice Announcement Text *</label>
+          <textarea id="notice-text-input" required rows="4" class="w-full p-3 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600" placeholder="Enter notice announcement text..."></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-edit-notice')" class="py-2 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-extrabold shadow">Save Notice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Yearly Fee Target Modal -->
+  <div id="modal-edit-fee-target" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-purple-900 flex items-center space-x-2">
+          <i data-lucide="target" class="w-4 h-4 text-purple-700"></i>
+          <span>Edit Yearly Fee Target</span>
+        </h3>
+        <button onclick="closeModal('modal-edit-fee-target')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveFeeTarget(event)" class="space-y-4 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Yearly Target Amount (₹) *</label>
+          <input type="number" id="target-amount-input" required min="0" step="1000" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-extrabold text-sm focus:ring-2 focus:ring-purple-600" placeholder="e.g. 500000">
+        </div>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-edit-fee-target')" class="py-2 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-extrabold shadow">Save Target</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit marks and grades Modal (Multi-subject entry at once) -->
+  <div id="modal-edit-marks" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-lg rounded-3xl p-6 shadow-2xl relative border border-slate-200 flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4 shrink-0">
+        <h3 class="text-base font-extrabold text-purple-900">Edit Exam Marks & Grades (All Subjects)</h3>
+        <button onclick="closeModal('modal-edit-marks')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveMarks(event)" class="space-y-4 text-xs font-bold flex-1 overflow-y-auto custom-scrollbar pr-1">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block mb-1 text-slate-700">Select Student *</label>
+            <select id="mks-student-select" required onchange="onMarksStudentChange()" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 text-slate-700">Exam Name *</label>
+            <input type="text" id="mks-exam-name" required value="Quarterly Exam 2026" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-purple-600">
+          </div>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-purple-50 border border-purple-100 text-purple-900 flex justify-between items-center text-xs">
+          <div>Roll: <strong id="mks-disp-roll" class="text-purple-700">--</strong></div>
+          <div>Student: <strong id="mks-disp-name" class="text-purple-700">--</strong></div>
+          <div>Class: <strong id="mks-disp-class" class="text-purple-700">--</strong></div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between items-center border-b border-slate-200 pb-1">
+            <span class="text-xs font-extrabold text-slate-900">Enter Subject Scores & Grades:</span>
+            <span class="text-[11px] text-slate-500 font-semibold">(Out of 100)</span>
+          </div>
+
+          <div id="mks-subjects-form-list" class="space-y-2.5">
+            <!-- Dynamically populated per configuredSubject -->
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-end space-x-3 shrink-0">
+          <button type="button" onclick="closeModal('modal-edit-marks')" class="py-2 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-bold shadow">Save All Subject Marks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Marks Modal -->
+  <div id="modal-delete-marks" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-base font-extrabold text-rose-700 flex items-center space-x-2">
+          <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
+          <span>Delete Student Marks</span>
+        </h3>
+        <button onclick="closeModal('modal-delete-marks')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleDeleteMarksSubmit(event)" class="space-y-4 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Select Student to Delete Marks *</label>
+          <select id="del-marks-student-select" required class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-rose-500">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <p class="text-[11px] text-rose-600 font-semibold bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+          ⚠️ Warning: This will delete all examination mark entries recorded for this student across all subjects.
+        </p>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-delete-marks')" class="py-2 px-4 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-2 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow">Delete All Marks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Holiday Modal -->
+  <div id="modal-holiday" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-sm font-extrabold text-amber-700 flex items-center space-x-2">
+          <i data-lucide="sun" class="w-4 h-4 text-amber-600"></i>
+          <span>Declare School Holiday</span>
+        </h3>
+        <button onclick="closeModal('modal-holiday')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveHoliday(event)" class="space-y-3 text-xs font-bold">
+        <div>
+          <label class="block text-slate-700 mb-1">Holiday Reason / Occasion *</label>
+          <input type="text" id="holiday-reason-input" required placeholder="e.g. Gandhi Jayanti, Sunday, Regional Holiday" class="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 font-bold focus:ring-2 focus:ring-amber-500">
+        </div>
+
+        <p class="text-[11px] text-amber-800 font-semibold bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+          ☀️ Marking this date as a holiday will save it persistently across the system and pause attendance recording for this day.
+        </p>
+
+        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-holiday')" class="py-1.5 px-4 rounded-xl bg-slate-200 text-slate-800 text-xs font-bold">Cancel</button>
+          <button type="submit" class="py-1.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow">Save Holiday</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Attendance History Modal -->
+  <div id="modal-attendance-history" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-lg rounded-3xl p-6 shadow-2xl relative border border-slate-200 flex flex-col max-h-[85vh]">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4 shrink-0">
+        <h3 class="text-base font-extrabold text-purple-900 flex items-center space-x-2">
+          <i data-lucide="history" class="w-5 h-5 text-purple-700"></i>
+          <span>Attendance History Logs</span>
+        </h3>
+        <button onclick="closeModal('modal-attendance-history')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div id="att-history-list" class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-1">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="pt-4 border-t border-slate-200 flex justify-end shrink-0">
+        <button type="button" onclick="closeModal('modal-attendance-history')" class="py-2 px-5 rounded-xl bg-[#463EC7] text-white text-xs font-bold shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reusable Confirmation Dialog Modal -->
+  <div id="modal-confirm" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border border-slate-200 text-center space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-xs font-bold text-slate-500">Confirmation</span>
+        <button onclick="closeModal('modal-confirm')" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <p id="confirm-msg-text" class="text-sm font-extrabold text-slate-900">Are you sure you want to proceed ?</p>
+
+      <div class="flex justify-center space-x-3 pt-2">
+        <button id="confirm-ok-btn" onclick="executeConfirmAction()" class="px-6 py-2 rounded-xl bg-purple-700 text-white font-extrabold text-xs shadow">OK</button>
+        <button onclick="closeModal('modal-confirm')" class="px-6 py-2 rounded-xl bg-slate-200 text-slate-800 font-extrabold text-xs">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reusable Toast Notification -->
+  <div id="toast-popup" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/20 z-50 flex items-center space-x-3 hidden">
+    <div class="p-1 rounded-lg bg-emerald-500 text-black"><i data-lucide="check" class="w-4 h-4"></i></div>
+    <span id="toast-msg-text" class="text-xs font-bold">Action completed successfully !</span>
+    <button onclick="hideToast()" class="text-white/80 hover:text-white ml-2"><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+
+  <script>
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar-container');
+      const backdrop = document.getElementById('mobile-sidebar-backdrop');
+      if (sidebar) sidebar.classList.toggle('-translate-x-full');
+      if (backdrop) backdrop.classList.toggle('hidden');
+    }
+
+    function closeMobileSidebar() {
+      const sidebar = document.getElementById('sidebar-container');
+      const backdrop = document.getElementById('mobile-sidebar-backdrop');
+      if (sidebar) sidebar.classList.add('-translate-x-full');
+      if (backdrop) backdrop.classList.add('hidden');
+    }
+
+    let currentRole = 'admin';
+    let currentUser = null;
+    let currentFrame = 'dashboard';
+    let currentLang = localStorage.getItem('app_lang') || 'en';
+    const API_BASE_URL = '/api';
+
+    let pendingConfirmAction = null;
+
+    // Accounts created by user during Registration (Up to 2 Admin slots: 1st Admin & 2nd Principal)
+    let registeredUsers = JSON.parse(localStorage.getItem('rr_registered_users')) || [];
+
+    // Admin Dynamic Classes & Subjects Configuration
+    let configuredClasses = JSON.parse(localStorage.getItem('rr_configured_classes')) || [
+      "Jr KG", "Sr KG", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"
+    ];
+
+    let configuredSubjects = JSON.parse(localStorage.getItem('rr_configured_subjects')) || [
+      "Hindi", "English", "Mathematics", "Science & EVS", "Social Science", "Sanskrit", "Computer"
+    ];
+
+    // School Config State
+    let schoolConfig = JSON.parse(localStorage.getItem('rr_school_config')) || {
+      name: "Radha Raman Education Institute",
+      subTitle: "Sirasana • Academic Portal",
+      address: "Sirasana, Degana, Nagaur, Rajasthan",
+      contact: "+91 98765 43210"
+    };
+
+    // Digital Signatures State (Supports Class-wise Teacher Signatures)
+    let digitalSignatures = JSON.parse(localStorage.getItem('rr_digital_signatures')) || {
+      teacher: null,
+      principal: null,
+      teachers: {}
+    };
+    if (!digitalSignatures.teachers) digitalSignatures.teachers = {};
+
+    // Clean initial data arrays (No sample dummy data)
+    let students = JSON.parse(localStorage.getItem('rr_students')) || [];
+    let teachers = JSON.parse(localStorage.getItem('rr_teachers')) || [];
+    let fees = JSON.parse(localStorage.getItem('rr_fees')) || [];
+    let marks = JSON.parse(localStorage.getItem('rr_marks')) || [];
+
+    let notifications = JSON.parse(localStorage.getItem('rr_notifications')) || [];
+
+    // Password Eye Toggle Handler
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        if(icon) icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        if(icon) icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    // Bilingual Dictionary
+    const translations = {
+      en: {
+        schoolName: "Radha Raman",
+        subTitle: "Education Institute",
+        navDashboard: "Dashboard",
+        navTeachers: "Teacher Management",
+        navStudents: "Student Management",
+        navAttendance: "Attendance",
+        navFees: "Fee Management",
+        navMarks: "Marks Management",
+        navReports: "Report cards",
+        navSettings: "Settings",
+        dashboard: "Dashboard Overview",
+        students: "Student Management Directory",
+        teachers: "Faculty & Teacher Directory",
+        attendance: "Daily Student Attendance",
+        fees: "Fee Management & Collections",
+        marks: "Academic Marks & Grades",
+        reports: "Digital Report Card",
+        settings: "Settings",
+        welcomeText: "Welcome to Radha Raman Smart Management. Better Education. 🙏",
+        totalStudents: "Total Students",
+        totalTeachers: "Total Teachers",
+        todaysAtt: "Today's Attendance",
+        noClasses: "No. of Classes",
+        noticeSec: "Notice Section :-",
+        quickActions: "Quick Actions",
+        actAddStudent: "Add student",
+        actDelStudent: "Delete student",
+        actEditStudent: "Edit student",
+        actViewStudent: "View student",
+        btnAddStudent: "+ Add student",
+        thRoll: "Roll number",
+        thName: "Name",
+        thClass: "Class",
+        thFather: "Father's name",
+        thMobile: "Mobile No.",
+        thGender: "Gender",
+        thDob: "Date of birth",
+        thAddress: "Address",
+        thActions: "Actions",
+        emptyStuTitle: "No Students added yet",
+        emptyStuSub: 'To add click on " + Add student "',
+        tchMgmt: "Teacher management",
+        actAddTeacher: "Add teacher",
+        actViewTeacher: "View teacher",
+        actDelTeacher: "Delete teacher",
+        emptyTchTitle: "No Teachers Added",
+        emptyTchSub: "Add your first teacher to start managing faculty records.",
+        attMarking: "Attendance Marking",
+        btnSaveAtt: "Save attendance",
+        selClass: "Select class",
+        attDate: "Date",
+        emptyAttTitle: "No attendance records available yet",
+        emptyAttSub: "Mark Attendance",
+        lblSchInfo: "School Information",
+        lblSchName: "School name",
+        lblSchAddr: "Address",
+        lblSchPhone: "Contact no.",
+        btnEditSchInfo: "Edit School Info",
+        modalAddStudentTitle: "Add Student",
+        modalEditStudentTitle: "Edit Student",
+        modalDelStudentTitle: "Delete Student",
+        lblStuRoll: "Roll Number *",
+        lblStuName: "Student Name *",
+        lblStuClass: "Class *",
+        lblStuFather: "Father's Name *",
+        lblStuMother: "Mother's Name",
+        lblStuGender: "Gender *",
+        lblStuDob: "Date of Birth",
+        lblStuMobile: "Mobile Number *",
+        lblStuAddress: "Address",
+        btnSaveStu: "Save Student",
+        btnCancelStu: "Cancel",
+        lblSelectDelStu: "Select Student to Delete *",
+        btnConfirmDel: "Delete Student"
+      },
+      hi: {
+        schoolName: "राधा रमण",
+        subTitle: "शिक्षा संस्थान",
+        navDashboard: "डैशबोर्ड",
+        navTeachers: "शिक्षक प्रबंधन",
+        navStudents: "विद्यार्थी प्रबंधन",
+        navAttendance: "उपस्थिति",
+        navFees: "शुल्क प्रबंधन",
+        navMarks: "अंक प्रबंधन",
+        navReports: "रिपोर्ट कार्ड",
+        navSettings: "सेटिंग्स",
+        dashboard: "डैशबोर्ड विवरण",
+        students: "विद्यार्थी प्रबंधन निर्देशिका",
+        teachers: "संकाय एवं शिक्षक निर्देशिका",
+        attendance: "दैनिक छात्र उपस्थिति",
+        fees: "शुल्क प्रबंधन एवं संग्रह",
+        marks: "शैक्षणिक अंक एवं ग्रेड",
+        reports: "डिजिटल रिपोर्ट कार्ड",
+        settings: "सेटिंग्स",
+        welcomeText: "राधा रमण स्मार्ट प्रबंधन में आपका स्वागत है 🙏",
+        totalStudents: "कुल विद्यार्थी",
+        totalTeachers: "कुल शिक्षक",
+        todaysAtt: "उपस्थिति",
+        noClasses: "कक्षाओं की संख्या",
+        noticeSec: "सूचना अनुभाग :-",
+        quickActions: "त्वरित कार्य",
+        actAddStudent: "विद्यार्थी जोड़ें",
+        actDelStudent: "विद्यार्थी हटाएं",
+        actEditStudent: "विद्यार्थी संपादित करें",
+        actViewStudent: "विद्यार्थी देखें",
+        btnAddStudent: "+ विद्यार्थी जोड़ें",
+        thRoll: "अनुक्रमांक",
+        thName: "नाम",
+        thClass: "कक्षा",
+        thFather: "पिता का नाम",
+        thMobile: "मोबाइल नंबर",
+        thGender: "लिंग",
+        thDob: "जन्म तिथि",
+        thAddress: "पता",
+        thActions: "कार्य",
+        emptyStuTitle: "अभी तक कोई विद्यार्थी नहीं जोड़ा गया है",
+        emptyStuSub: 'विद्यार्थी जोड़ने के लिए " + विद्यार्थी जोड़ें " पर क्लिक करें',
+        tchMgmt: "शिक्षक प्रबंधन",
+        actAddTeacher: "शिक्षक जोड़ें",
+        actViewTeacher: "शिक्षक देखें",
+        actDelTeacher: "शिक्षक हटाएं",
+        emptyTchTitle: "शिक्षक नहीं जोड़ा गया है",
+        emptyTchSub: "शिक्षक रिकॉर्ड प्रबंधित करना शुरू करने के लिए अपना पहला शिक्षक जोड़ें",
+        attMarking: "उपस्थिति दर्ज करें",
+        btnSaveAtt: "उपस्थिति सहेजें",
+        selClass: "कक्षा चुनें",
+        attDate: "दिनांक",
+        emptyAttTitle: "अभी तक कोई उपस्थिति रिकॉर्ड उपलब्ध नहीं है",
+        emptyAttSub: "उपस्थिति अंकित करें",
+        lblSchInfo: "विद्यालय की जानकारी",
+        lblSchName: "विद्यालय का नाम",
+        lblSchAddr: "पता",
+        lblSchPhone: "संपर्क नंबर",
+        btnEditSchInfo: "जानकारी संपादित करें",
+        modalAddStudentTitle: "छात्र जोड़ें",
+        modalEditStudentTitle: "छात्र संपादित करें",
+        modalDelStudentTitle: "छात्र हटाएं",
+        lblStuRoll: "अनुक्रमांक *",
+        lblStuName: "छात्र का नाम *",
+        lblStuClass: "कक्षा *",
+        lblStuFather: "पिता का नाम *",
+        lblStuMother: "माता का नाम",
+        lblStuGender: "लिंग *",
+        lblStuDob: "जन्म तिथि",
+        lblStuMobile: "मोबाइल नंबर *",
+        lblStuAddress: "पता",
+        btnSaveStu: "छात्र सहेजें",
+        btnCancelStu: "रद्द करें",
+        lblSelectDelStu: "हटाने के लिए छात्र चुनें *",
+        btnConfirmDel: "छात्र हटाएं"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('app_lang', currentLang);
+      document.getElementById('lang-radio-en').checked = (lang === 'en');
+      document.getElementById('lang-radio-hi').checked = (lang === 'hi');
+      document.getElementById('header-lang-label').innerText = (lang === 'en' ? 'हिन्दी' : 'English');
+      applyTranslations();
+      renderStudents();
+      renderTeachers();
+      loadAttendanceRoster();
+    }
+
+    function toggleLanguage() {
+      setLanguage(currentLang === 'en' ? 'hi' : 'en');
+    }
+
+    function applyTranslations() {
+      const t = translations[currentLang];
+      const safeSet = (id, text) => {
+        const el = document.getElementById(id);
+        if(el) el.innerText = text;
+      };
+
+      safeSet('sidebar-app-name', currentLang === 'hi' ? translations.hi.schoolName : schoolConfig.name.split(' ')[0]);
+      safeSet('sidebar-app-sub', schoolConfig.subTitle);
+
+      ['dashboard', 'teachers', 'students', 'attendance', 'fees', 'marks', 'reports', 'settings'].forEach(m => {
+        const btn = document.getElementById(`nav-${m}`);
+        if(btn && btn.querySelector('span')) {
+          btn.querySelector('span').innerText = t[`nav${m.charAt(0).toUpperCase() + m.slice(1)}`];
+        }
+      });
+
+      safeSet('current-frame-title', t[currentFrame] || t.dashboard);
+      safeSet('dash-welcome-text', t.welcomeText);
+      safeSet('lbl-total-students', t.totalStudents);
+      safeSet('lbl-total-teachers', t.totalTeachers);
+      safeSet('lbl-todays-att', t.todaysAtt);
+      safeSet('lbl-no-classes', t.noClasses);
+      safeSet('lbl-notice-sec', t.noticeSec);
+      safeSet('lbl-quick-actions', t.quickActions);
+      safeSet('act-add-student', t.actAddStudent);
+      safeSet('act-del-student', t.actDelStudent);
+      safeSet('act-edit-student', t.actEditStudent);
+      safeSet('act-view-student', t.actViewStudent);
+      safeSet('btn-add-student-label', t.btnAddStudent);
+      safeSet('th-roll', t.thRoll);
+      safeSet('th-name', t.thName);
+      safeSet('th-class', t.thClass);
+      safeSet('th-father', t.thFather);
+      safeSet('th-mobile', t.thMobile);
+      safeSet('th-gender', t.thGender);
+      safeSet('th-dob', t.thDob);
+      safeSet('th-address', t.thAddress);
+      safeSet('th-actions', t.thActions);
+    }
+
+    function populateClassAndSubjectDropdowns() {
+      const classSelects = ['stud-class-input', 'att-class-filter', 'mks-class'];
+      classSelects.forEach(id => {
+        const select = document.getElementById(id);
+        if(select) {
+          const currentVal = select.value;
+          select.innerHTML = configuredClasses.map(c => `<option value="${c}">${c}</option>`).join('');
+          if(configuredClasses.includes(currentVal)) select.value = currentVal;
+        }
+      });
+
+      const mksSubject = document.getElementById('mks-subject');
+      if(mksSubject) {
+        mksSubject.innerHTML = configuredSubjects.map(s => `<option value="${s}">${s}</option>`).join('');
+      }
+
+      const classPills = document.getElementById('configured-classes-pills');
+      if(classPills) {
+        classPills.innerHTML = configuredClasses.map(c => `
+          <span class="px-3 py-1.5 rounded-xl bg-amber-100 text-purple-900 border border-amber-300 flex items-center space-x-1">
+            <span>${c}</span>
+            <button onclick="removeClass('${c}')" class="text-rose-600 hover:text-rose-800 ml-1 font-extrabold">×</button>
+          </span>
+        `).join('');
+      }
+
+      const subjectPills = document.getElementById('configured-subjects-pills');
+      if(subjectPills) {
+        subjectPills.innerHTML = configuredSubjects.map(s => `
+          <span class="px-3 py-1.5 rounded-xl bg-indigo-100 text-indigo-900 border border-indigo-300 flex items-center space-x-1">
+            <span>${s}</span>
+            <button onclick="removeSubject('${s}')" class="text-rose-600 hover:text-rose-800 ml-1 font-extrabold">×</button>
+          </span>
+        `).join('');
+      }
+
+      const totalClassesEl = document.getElementById('dash-total-classes');
+      if(totalClassesEl) totalClassesEl.innerText = configuredClasses.length;
+    }
+
+    function addClass(className) {
+      if(!className || configuredClasses.includes(className)) return;
+      configuredClasses.push(className);
+      localStorage.setItem('rr_configured_classes', JSON.stringify(configuredClasses));
+      populateClassAndSubjectDropdowns();
+      showToast(`Class '${className}' added successfully !`);
+    }
+
+    function removeClass(className) {
+      configuredClasses = configuredClasses.filter(c => c !== className);
+      localStorage.setItem('rr_configured_classes', JSON.stringify(configuredClasses));
+      populateClassAndSubjectDropdowns();
+      showToast(`Class '${className}' removed !`);
+    }
+
+    function addSubject(subjectName) {
+      if(!subjectName || configuredSubjects.includes(subjectName)) return;
+      configuredSubjects.push(subjectName);
+      localStorage.setItem('rr_configured_subjects', JSON.stringify(configuredSubjects));
+      populateClassAndSubjectDropdowns();
+      showToast(`Subject '${subjectName}' added successfully !`);
+    }
+
+    function removeSubject(subjectName) {
+      configuredSubjects = configuredSubjects.filter(s => s !== subjectName);
+      localStorage.setItem('rr_configured_subjects', JSON.stringify(configuredSubjects));
+      populateClassAndSubjectDropdowns();
+      showToast(`Subject '${subjectName}' removed !`);
+    }
+
+    function openAddClassModal() {
+      document.getElementById('modal-add-class').classList.remove('hidden');
+    }
+
+    function handleSaveNewClass(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-class-input').value.trim();
+      addClass(name);
+      closeModal('modal-add-class');
+      document.getElementById('new-class-input').value = '';
+    }
+
+    function openAddSubjectModal() {
+      document.getElementById('modal-add-subject').classList.remove('hidden');
+    }
+
+    function handleSaveNewSubject(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-subject-input').value.trim();
+      addSubject(name);
+      closeModal('modal-add-subject');
+      document.getElementById('new-subject-input').value = '';
+    }
+
+    let selectedLoginTabRole = 'admin';
+
+    function setLoginRole(role) {
+      selectedLoginTabRole = role;
+      ['admin', 'teacher', 'student'].forEach(r => {
+        const btn = document.getElementById(`role-btn-${r}`);
+        if(r === role) {
+          btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-950 bg-amber-400 shadow";
+        } else {
+          btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-white hover:bg-white/10";
+        }
+      });
+    }
+
+    function showRegisterPage() {
+      document.getElementById('frame-login').classList.add('hidden');
+      document.getElementById('frame-register').classList.remove('hidden');
+    }
+
+    function showLoginPage() {
+      document.getElementById('frame-register').classList.add('hidden');
+      document.getElementById('frame-login').classList.remove('hidden');
+    }
+
+    function handleRegister(e) {
+      if(e) e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const role = document.getElementById('reg-role').value;
+      const pass = document.getElementById('reg-pass').value.trim();
+
+      // Check if Admin registration limit (2 Slots: 1st Admin & 2nd Principal) is reached
+      if(role === 'admin') {
+        const existingAdminCount = registeredUsers.filter(u => u.role === 'admin').length;
+        if(existingAdminCount >= 2) {
+          alert("⚠️ Limit Reached! Only 2 Admin slots (1st Admin & 2nd Principal) are allowed in the system.\n\nPlease select 'Teacher' or 'Student' for new accounts, or contact an existing Admin.");
+          return;
+        }
+      }
+
+      // Check if email already exists
+      if(registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        alert("⚠️ Email ID already registered! Please sign in or use another email.");
+        return;
+      }
+
+      const newUser = { name, email, pass, role };
+      registeredUsers.push(newUser);
+      localStorage.setItem('rr_registered_users', JSON.stringify(registeredUsers));
+
+      try {
+        fetch(`${API_BASE_URL}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password: pass, role })
+        });
+      } catch(err) {}
+
+      showToast('Account created successfully! Please sign in.');
+      showLoginPage();
+      document.getElementById('login-user').value = email;
+      document.getElementById('login-pass').value = pass;
+    }
+
+    function handleLogin(e) {
+      if(e) e.preventDefault();
+      const emailInput = document.getElementById('login-user').value.trim();
+      const passInput = document.getElementById('login-pass').value.trim();
+
+      // Try matching in memory / localStorage
+      let matched = registeredUsers.find(u => u.email.toLowerCase() === emailInput.toLowerCase() && u.pass === passInput);
+
+      if(!matched) {
+        alert("⚠️ Access Denied! Invalid credentials or account not registered.\n\nPlease click 'Register Account' to create your account first.");
+        return;
+      }
+
+      // Role Tab Verification Guard: Block login if selected tab doesn't match registered user's role
+      if (matched.role.toLowerCase() !== selectedLoginTabRole.toLowerCase()) {
+        const expectedRoleName = matched.role === 'admin' ? 'Admin' : (matched.role === 'teacher' ? 'Teacher' : 'Student');
+        const selectedRoleName = selectedLoginTabRole === 'admin' ? 'Admin' : (selectedLoginTabRole === 'teacher' ? 'Teacher' : 'Student');
+        alert(`⚠️ Access Denied! This account is registered as '${expectedRoleName}', but you selected the '${selectedRoleName}' tab.\n\nPlease click the '${expectedRoleName}' tab to sign in.`);
+        return;
+      }
+
+      currentUser = matched;
+      currentRole = matched.role;
+
+      document.getElementById('user-name').innerText = currentUser.name;
+      document.getElementById('user-role-tag').innerText = currentRole === 'admin' ? 'Super Admin / Principal' : (currentRole === 'teacher' ? 'Faculty Teacher' : 'Student Portal');
+      document.getElementById('user-avatar').innerText = currentUser.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+
+      applyRoleBasedAccessControl();
+
+      document.getElementById('frame-login').classList.add('hidden');
+      document.getElementById('frame-register').classList.add('hidden');
+      document.getElementById('app-main').classList.remove('hidden');
+      switchFrame('dashboard');
+    }
+
+    function applyRoleBasedAccessControl() {
+      const navTeachers = document.getElementById('nav-teachers');
+      const navStudents = document.getElementById('nav-students');
+      const navFees = document.getElementById('nav-fees');
+      const navSettings = document.getElementById('nav-settings');
+      const quickActionsCard = document.getElementById('quick-actions-card');
+      const btnAddStudentTop = document.getElementById('btn-add-student-top');
+      const teacherActionsSidebar = document.getElementById('teacher-actions-sidebar');
+      const btnSaveAttendance = document.getElementById('btn-save-attendance');
+      const btnRecordFee = document.getElementById('btn-record-fee');
+      const btnEditMarks = document.getElementById('btn-edit-marks');
+      const btnAddSignature = document.getElementById('btn-add-signature');
+      const adminConfigSection = document.getElementById('admin-config-section');
+      const btnEditSchoolInfo = document.getElementById('btn-edit-school-info');
+
+      const btnDelMarks = document.getElementById('btn-del-marks');
+
+      if(currentRole === 'student') {
+        if(navTeachers) navTeachers.classList.add('hidden');
+        if(navStudents) navStudents.classList.add('hidden');
+        if(navSettings) navSettings.classList.add('hidden');
+        if(quickActionsCard) quickActionsCard.classList.add('hidden');
+        if(btnAddStudentTop) btnAddStudentTop.classList.add('hidden');
+        if(teacherActionsSidebar) teacherActionsSidebar.classList.add('hidden');
+        if(btnSaveAttendance) btnSaveAttendance.classList.add('hidden');
+        if(btnRecordFee) btnRecordFee.classList.add('hidden');
+        if(btnEditMarks) btnEditMarks.classList.add('hidden');
+        if(btnDelMarks) btnDelMarks.classList.add('hidden');
+        if(btnAddSignature) btnAddSignature.classList.add('hidden');
+        if(adminConfigSection) adminConfigSection.classList.add('hidden');
+        if(btnEditSchoolInfo) btnEditSchoolInfo.classList.add('hidden');
+      } else if(currentRole === 'teacher') {
+        if(navTeachers) navTeachers.classList.remove('hidden');
+        if(navStudents) navStudents.classList.remove('hidden');
+        if(navFees) navFees.classList.add('hidden');
+        if(navSettings) navSettings.classList.add('hidden');
+        if(quickActionsCard) quickActionsCard.classList.remove('hidden');
+        if(btnAddStudentTop) btnAddStudentTop.classList.remove('hidden');
+        if(teacherActionsSidebar) teacherActionsSidebar.classList.remove('hidden');
+        if(btnSaveAttendance) btnSaveAttendance.classList.remove('hidden');
+        if(btnRecordFee) btnRecordFee.classList.add('hidden');
+        if(btnEditMarks) btnEditMarks.classList.remove('hidden');
+        if(btnDelMarks) btnDelMarks.classList.remove('hidden');
+        if(btnAddSignature) btnAddSignature.classList.remove('hidden');
+        if(adminConfigSection) adminConfigSection.classList.add('hidden');
+        if(btnEditSchoolInfo) btnEditSchoolInfo.classList.add('hidden');
+      } else {
+        if(navTeachers) navTeachers.classList.remove('hidden');
+        if(navStudents) navStudents.classList.remove('hidden');
+        if(navFees) navFees.classList.remove('hidden');
+        if(navSettings) navSettings.classList.remove('hidden');
+        if(quickActionsCard) quickActionsCard.classList.remove('hidden');
+        if(btnAddStudentTop) btnAddStudentTop.classList.remove('hidden');
+        if(teacherActionsSidebar) teacherActionsSidebar.classList.remove('hidden');
+        if(btnSaveAttendance) btnSaveAttendance.classList.remove('hidden');
+        if(btnRecordFee) btnRecordFee.classList.remove('hidden');
+        if(btnEditMarks) btnEditMarks.classList.remove('hidden');
+        if(btnDelMarks) btnDelMarks.classList.remove('hidden');
+        if(btnAddSignature) btnAddSignature.classList.remove('hidden');
+        if(adminConfigSection) adminConfigSection.classList.remove('hidden');
+        if(btnEditSchoolInfo) btnEditSchoolInfo.classList.remove('hidden');
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      document.getElementById('app-main').classList.add('hidden');
+      document.getElementById('frame-register').classList.add('hidden');
+      document.getElementById('frame-login').classList.remove('hidden');
+    }
+
+    function switchFrame(frameId) {
+      closeMobileSidebar();
+      currentFrame = frameId;
+      const frames = ['dashboard', 'students', 'teachers', 'attendance', 'fees', 'marks', 'reports', 'settings'];
+      
+      frames.forEach(f => {
+        const el = document.getElementById(`content-${f}`);
+        const nav = document.getElementById(`nav-${f}`);
+        if(f === frameId) {
+          if(el) el.classList.remove('hidden');
+          if(nav) nav.className = "w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all bg-[#A439C9] text-white shadow-md";
+        } else {
+          if(el) el.classList.add('hidden');
+          if(nav) nav.className = "w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-white/90 hover:bg-[#A439C9]/60";
+        }
+      });
+
+      const t = translations[currentLang];
+      document.getElementById('current-frame-title').innerText = t[frameId] || translations['en'][frameId];
+
+      if(frameId === 'dashboard') initDashboard();
+      if(frameId === 'students') renderStudents();
+      if(frameId === 'teachers') renderTeachers();
+      if(frameId === 'attendance') loadAttendanceRoster();
+      if(frameId === 'fees') renderFees();
+      if(frameId === 'marks') renderMarks();
+      if(frameId === 'reports') populateReportCardDropdown();
+      if(frameId === 'settings') loadSettingsAccountDisplay();
+    }
+
+    function loadSettingsAccountDisplay() {
+      if(currentUser) {
+        document.getElementById('set-admin-name').innerText = currentUser.name;
+        document.getElementById('set-admin-email').innerText = currentUser.email;
+      }
+    }
+
+    function openEditAccountModal() {
+      if(currentUser) {
+        document.getElementById('acc-name').value = currentUser.name;
+        document.getElementById('acc-email').value = currentUser.email;
+        document.getElementById('acc-pass').value = currentUser.pass || '';
+      }
+      document.getElementById('modal-edit-account').classList.remove('hidden');
+    }
+
+    function handleSaveAccount(e) {
+      e.preventDefault();
+      const newName = document.getElementById('acc-name').value.trim();
+      const newEmail = document.getElementById('acc-email').value.trim();
+      const newPass = document.getElementById('acc-pass').value.trim();
+
+      if(currentUser) {
+        currentUser.name = newName;
+        currentUser.email = newEmail;
+        if(newPass) currentUser.pass = newPass;
+
+        // Sync in registeredUsers array
+        const idx = registeredUsers.findIndex(u => u.email.toLowerCase() === currentUser.email.toLowerCase() || u.name === currentUser.name);
+        if(idx !== -1) {
+          registeredUsers[idx] = currentUser;
+          localStorage.setItem('rr_registered_users', JSON.stringify(registeredUsers));
+        }
+      }
+
+      document.getElementById('set-admin-name').innerText = newName;
+      document.getElementById('set-admin-email').innerText = newEmail;
+      document.getElementById('user-name').innerText = newName;
+
+      closeModal('modal-edit-account');
+      showToast('Account details updated successfully !');
+    }
+
+    function initDashboard() {
+      document.getElementById('dash-total-students').innerText = students.length;
+      document.getElementById('dash-total-teachers').innerText = teachers.length;
+      const noticeDisplay = document.getElementById('dash-display-notice');
+      if (noticeDisplay) noticeDisplay.innerText = dashboardNotice;
+      renderNotifications();
+    }
+
+    function updateSchoolDisplay() {
+      const dispName = document.getElementById('disp-sch-name');
+      if(dispName) dispName.innerText = schoolConfig.name;
+      const dispAddr = document.getElementById('disp-sch-address');
+      if(dispAddr) dispAddr.innerText = schoolConfig.address;
+      const dispContact = document.getElementById('disp-sch-contact');
+      if(dispContact) dispContact.innerText = schoolConfig.contact;
+
+      const rcTitle = document.getElementById('rc-header-title');
+      if(rcTitle) rcTitle.innerText = schoolConfig.name;
+      const rcSub = document.getElementById('rc-header-sub');
+      if(rcSub) rcSub.innerText = schoolConfig.subTitle + " , " + schoolConfig.address;
+
+      const sideName = document.getElementById('sidebar-app-name');
+      if(sideName) sideName.innerText = schoolConfig.name;
+      const sideSub = document.getElementById('sidebar-app-sub');
+      if(sideSub) sideSub.innerText = schoolConfig.subTitle;
+
+      const loginTitle = document.getElementById('login-emblem-title');
+      if(loginTitle) loginTitle.innerText = schoolConfig.name;
+      const loginSub = document.getElementById('login-emblem-sub');
+      if(loginSub) loginSub.innerText = schoolConfig.subTitle;
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if(el) el.classList.add('hidden');
+    }
+
+    function openNotificationsModal() {
+      renderNotifications();
+      document.getElementById('modal-notifications').classList.remove('hidden');
+    }
+
+    function renderNotifications() {
+      const container = document.getElementById('notif-list-container');
+      if(!container) return;
+      if(notifications.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">No new notifications</p>`;
+        return;
+      }
+      container.innerHTML = notifications.map(n => `
+        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-start space-x-3">
+          <div class="p-2 rounded-xl bg-purple-100 text-purple-600 shrink-0"><i data-lucide="${n.type || 'bell'}" class="w-4 h-4"></i></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-center">
+              <h4 class="text-xs font-extrabold text-slate-900">${n.title}</h4>
+              <span class="text-[10px] font-bold text-slate-400">${n.time}</span>
+            </div>
+            <p class="text-[11px] text-slate-600 font-semibold mt-0.5">${n.msg}</p>
+          </div>
+          <button onclick="dismissNotification(${n.id})" class="text-slate-400 hover:text-rose-600 p-1 font-extrabold text-xs">✕</button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function dismissNotification(id) {
+      notifications = notifications.filter(n => n.id !== id);
+      localStorage.setItem('rr_notifications', JSON.stringify(notifications));
+      renderNotifications();
+    }
+
+    function markAllNotificationsRead() {
+      const dot = document.getElementById('notif-badge-dot');
+      if(dot) dot.classList.add('hidden');
+      showToast(currentLang === 'hi' ? 'सभी सूचनाएं पढ़ी हुई अंकित की गईं' : 'All notifications marked as read !');
+    }
+
+    // Digital Signature Handlers
+    let sigCanvas, sigCtx, isDrawing = false;
+
+    function onSigRoleChange() {
+      const role = document.getElementById('sig-role-select').value;
+      const classBox = document.getElementById('sig-class-select-box');
+      if (classBox) {
+        if (role === 'teacher') classBox.classList.remove('hidden');
+        else classBox.classList.add('hidden');
+      }
+    }
+
+    function openSignatureModal() {
+      const classSelect = document.getElementById('sig-class-select');
+      if (classSelect) {
+        classSelect.innerHTML = configuredClasses.map(c => `<option value="${c}">${c}</option>`).join('');
+        const rcStudentSelect = document.getElementById('report-card-student-select');
+        const rollVal = rcStudentSelect ? rcStudentSelect.value : '';
+        const s = students.find(x => x.roll.toString() === rollVal);
+        if (s && configuredClasses.includes(s.class)) {
+          classSelect.value = s.class;
+        }
+      }
+      onSigRoleChange();
+
+      document.getElementById('modal-signature').classList.remove('hidden');
+      setTimeout(() => {
+        sigCanvas = document.getElementById('sig-canvas');
+        if(sigCanvas) {
+          sigCtx = sigCanvas.getContext('2d');
+          sigCtx.strokeStyle = '#463EC7';
+          sigCtx.lineWidth = 2.5;
+
+          sigCanvas.onmousedown = (e) => { isDrawing = true; sigCtx.beginPath(); sigCtx.moveTo(e.offsetX, e.offsetY); };
+          sigCanvas.onmousemove = (e) => { if(isDrawing) { sigCtx.lineTo(e.offsetX, e.offsetY); sigCtx.stroke(); } };
+          sigCanvas.onmouseup = () => { isDrawing = false; };
+        }
+      }, 200);
+    }
+
+    function clearSignatureCanvas() {
+      if(sigCtx && sigCanvas) sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    }
+
+    function handleApplySignature(e) {
+      e.preventDefault();
+      const role = document.getElementById('sig-role-select').value;
+      const targetClass = document.getElementById('sig-class-select').value || (configuredClasses[0] || '1st');
+      const textSig = document.getElementById('sig-text-input').value.trim();
+
+      let sigData = textSig ? textSig : (sigCanvas ? sigCanvas.toDataURL() : null);
+
+      if(!digitalSignatures.teachers) digitalSignatures.teachers = {};
+
+      if(role === 'teacher') {
+        digitalSignatures.teachers[targetClass] = { type: textSig ? 'text' : 'draw', val: sigData };
+      }
+      if(role === 'principal') {
+        digitalSignatures.principal = { type: textSig ? 'text' : 'draw', val: sigData };
+      }
+
+      localStorage.setItem('rr_digital_signatures', JSON.stringify(digitalSignatures));
+
+      const rcStudentSelect = document.getElementById('report-card-student-select');
+      const rollVal = rcStudentSelect ? rcStudentSelect.value : '';
+      const s = students.find(x => x.roll.toString() === rollVal);
+      renderDigitalSignatures(s ? s.class : targetClass);
+
+      closeModal('modal-signature');
+      showToast(role === 'teacher' ? `Signature applied for Class ${targetClass} Teacher!` : 'Principal Signature applied!');
+    }
+
+    function renderDigitalSignatures(studentClass) {
+      const teacherContainer = document.getElementById('rc-teacher-sig-container');
+      const principalContainer = document.getElementById('rc-principal-sig-container');
+
+      if (!studentClass) {
+        const rcStudentSelect = document.getElementById('report-card-student-select');
+        const rollVal = rcStudentSelect ? rcStudentSelect.value : '';
+        const s = students.find(x => x.roll.toString() === rollVal.toString());
+        if (s) studentClass = s.class;
+      }
+
+      const teacherSig = (studentClass && digitalSignatures.teachers && digitalSignatures.teachers[studentClass]) 
+        ? digitalSignatures.teachers[studentClass] 
+        : null;
+
+      if(teacherContainer) {
+        if(teacherSig && teacherSig.val) {
+          teacherContainer.innerHTML = teacherSig.type === 'text' 
+            ? `<span class="font-signature text-2xl text-indigo-900">${teacherSig.val}</span>`
+            : `<img src="${teacherSig.val}" class="h-14 object-contain">`;
+        } else {
+          teacherContainer.innerHTML = `<span class="text-slate-400 font-normal">✏️ Click "Sign Report Card" to add</span>`;
+        }
+      }
+
+      if(principalContainer) {
+        if(digitalSignatures.principal && digitalSignatures.principal.val) {
+          principalContainer.innerHTML = digitalSignatures.principal.type === 'text' 
+            ? `<span class="font-signature text-2xl text-purple-900">${digitalSignatures.principal.val}</span>`
+            : `<img src="${digitalSignatures.principal.val}" class="h-14 object-contain">`;
+        } else {
+          principalContainer.innerHTML = `<span class="text-slate-400 font-normal">✏️ Click "Sign Report Card" to add</span>`;
+        }
+      }
+    }
+
+    // Student Modals
+    // Student Modals
+    function openAddStudentModal() {
+      if(currentRole === 'student') return;
+      const t = translations[currentLang];
+      document.getElementById('modal-student-title').innerText = t.modalAddStudentTitle;
+      document.getElementById('stud-edit-id').value = '';
+
+      const numericRolls = students.map(s => parseInt(s.roll)).filter(r => !isNaN(r));
+      const nextRoll = numericRolls.length ? (Math.max(...numericRolls) + 1) : 101;
+
+      document.getElementById('stud-roll-input').value = nextRoll;
+      document.getElementById('stud-name-input').value = '';
+      document.getElementById('stud-class-input').value = configuredClasses[0] || '1st';
+      document.getElementById('stud-gender-input').value = 'Male';
+      document.getElementById('stud-father-input').value = '';
+      document.getElementById('stud-mother-input').value = '';
+      document.getElementById('stud-mobile-input').value = '';
+      document.getElementById('stud-dob-input').value = '';
+      document.getElementById('stud-address-input').value = '';
+      document.getElementById('modal-student').classList.remove('hidden');
+    }
+
+    function openEditStudentModal(id) {
+      if(currentRole === 'student') return;
+      let s = null;
+      if(id !== undefined && id !== null && id !== '') {
+        s = students.find(x => (x.id && x.id.toString() === String(id)) || (x.studentId && x.studentId.toString() === String(id)) || x.roll.toString() === String(id));
+      } else {
+        s = students[0];
+      }
+      
+      if(!s) {
+        openAddStudentModal();
+        return;
+      }
+
+      const t = translations[currentLang];
+      document.getElementById('modal-student-title').innerText = t.modalEditStudentTitle;
+      document.getElementById('stud-edit-id').value = s.id || s.studentId || s.roll;
+      document.getElementById('stud-roll-input').value = s.roll;
+      document.getElementById('stud-name-input').value = s.name;
+      document.getElementById('stud-class-input').value = s.class || configuredClasses[0] || '1st';
+      document.getElementById('stud-gender-input').value = s.gender || 'Male';
+      document.getElementById('stud-father-input').value = s.father || '';
+      document.getElementById('stud-mother-input').value = s.mother || '';
+      document.getElementById('stud-mobile-input').value = s.mobile || '';
+      document.getElementById('stud-dob-input').value = s.dob || '';
+      document.getElementById('stud-address-input').value = s.address || '';
+      document.getElementById('modal-student').classList.remove('hidden');
+    }
+
+    function openDeleteStudentModal(id) {
+      if(currentRole === 'student') return;
+      const select = document.getElementById('del-student-select');
+      if(students.length === 0) {
+        showToast(currentLang === 'hi' ? 'हटाने के लिए कोई विद्यार्थी उपलब्ध नहीं है' : 'No students available to delete');
+        return;
+      }
+      select.innerHTML = students.map(s => {
+        const val = s.id || s.studentId || s.roll;
+        const isSel = (id !== undefined && String(val) === String(id));
+        return `<option value="${val}" ${isSel ? 'selected' : ''}>Roll ${s.roll} - ${s.name} (${s.class})</option>`;
+      }).join('');
+      const t = translations[currentLang];
+      document.getElementById('modal-del-student-title').querySelector('span').innerText = t.modalDelStudentTitle;
+      document.getElementById('modal-delete-student').classList.remove('hidden');
+    }
+
+    function openAddTeacherModal() {
+      if(currentRole === 'student') return;
+      const select = document.getElementById('tch-subject-input');
+      if(select) {
+        select.innerHTML = configuredSubjects.map(s => `<option value="${s}">${s}</option>`).join('');
+      }
+      document.getElementById('tch-name-input').value = '';
+      document.getElementById('tch-qual-input').value = '';
+      document.getElementById('tch-mobile-input').value = '';
+      document.getElementById('tch-email-input').value = '';
+      document.getElementById('modal-add-teacher').classList.remove('hidden');
+    }
+
+    function handleSaveTeacher(e) {
+      if(currentRole === 'student') return;
+      e.preventDefault();
+      const name = document.getElementById('tch-name-input').value.trim();
+      const subject = document.getElementById('tch-subject-input').value;
+      const qualification = document.getElementById('tch-qual-input').value.trim();
+      const mobile = document.getElementById('tch-mobile-input').value.trim();
+      const email = document.getElementById('tch-email-input').value.trim();
+
+      const newTeacher = { id: Date.now(), name, subject, qualification: qualification || 'Faculty', mobile, email };
+      teachers.push(newTeacher);
+      localStorage.setItem('rr_teachers', JSON.stringify(teachers));
+
+      try {
+        fetch(`${API_BASE_URL}/teachers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, subject, qualification, mobile, email })
+        });
+      } catch(err) {}
+
+      closeModal('modal-add-teacher');
+      renderTeachers();
+      initDashboard();
+      showToast(currentLang === 'hi' ? 'शिक्षक सफलतापूर्वक जोड़ा गया !' : 'Teacher added successfully !');
+    }
+
+    function openTeacherDetailsModal() {
+      const container = document.getElementById('view-teachers-list');
+      if(teachers.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 font-bold">No teachers registered yet.</p>`;
+      } else {
+        container.innerHTML = teachers.map(t => `
+          <div class="p-3 rounded-2xl bg-slate-100 border border-slate-200 space-y-1">
+            <h4 class="text-xs font-extrabold text-slate-900">${t.name}</h4>
+            <p class="text-[11px] text-purple-700 font-bold">${t.subject} • ${t.qualification || 'Faculty'}</p>
+            <p class="text-[11px] text-slate-600 font-mono">📱 ${t.mobile} ${t.email ? ' | ✉️ ' + t.email : ''}</p>
+          </div>
+        `).join('');
+      }
+      document.getElementById('modal-view-teachers').classList.remove('hidden');
+    }
+
+    function openDeleteTeacherModal() {
+      if(currentRole === 'student') return;
+      if(teachers.length === 0) {
+        showToast(currentLang === 'hi' ? 'हटाने के लिए कोई शिक्षक उपलब्ध नहीं है' : 'No teachers available to delete');
+        return;
+      }
+      const select = document.getElementById('del-teacher-select');
+      select.innerHTML = teachers.map(t => `<option value="${t.id}">${t.name} (${t.subject})</option>`).join('');
+      document.getElementById('modal-delete-teacher').classList.remove('hidden');
+    }
+
+    function handleDeleteTeacherSubmit(e) {
+      if(currentRole === 'student') return;
+      e.preventDefault();
+      const selectVal = document.getElementById('del-teacher-select').value;
+      teachers = teachers.filter(t => t.id.toString() !== selectVal.toString());
+      localStorage.setItem('rr_teachers', JSON.stringify(teachers));
+      closeModal('modal-delete-teacher');
+      renderTeachers();
+      initDashboard();
+      showToast(currentLang === 'hi' ? 'शिक्षक सफलतापूर्वक हटा दिया गया !' : 'Teacher deleted successfully !');
+    }
+
+    function deleteTeacherDirect(id) {
+      if(currentRole === 'student') return;
+      const msg = currentLang === 'hi' ? 'क्या आप वाकई इस शिक्षक को हटाना चाहते हैं?' : 'Are you sure you want to remove this teacher ?';
+      openConfirmModal(msg, () => {
+        teachers = teachers.filter(t => t.id.toString() !== id.toString());
+        localStorage.setItem('rr_teachers', JSON.stringify(teachers));
+        renderTeachers();
+        initDashboard();
+        showToast(currentLang === 'hi' ? 'शिक्षक हटा दिया गया !' : 'Teacher removed successfully !');
+      });
+    }
+
+    function openRecordFeeModal() {
+      document.getElementById('fee-stud-name').value = (students[0] ? students[0].name : '');
+      document.getElementById('fee-amount').value = '';
+      document.getElementById('modal-fee-payment').classList.remove('hidden');
+    }
+
+    function openEditMarksModal() {
+      document.getElementById('mks-roll').value = (students[0] ? students[0].roll : '');
+      document.getElementById('mks-score').value = '';
+      document.getElementById('mks-grade').value = '';
+      document.getElementById('modal-edit-marks').classList.remove('hidden');
+    }
+
+    function showToast(msg) {
+      document.getElementById('toast-msg-text').innerText = msg;
+      const toast = document.getElementById('toast-popup');
+      toast.classList.remove('hidden');
+      setTimeout(() => hideToast(), 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('toast-popup').classList.add('hidden');
+    }
+
+    // Student Save (In-place update by unique ID without duplicate record creation)
+    function handleSaveStudent(e) {
+      e.preventDefault();
+      const editId = document.getElementById('stud-edit-id').value;
+      const rollNum = parseInt(document.getElementById('stud-roll-input').value);
+
+      const existingRecord = editId ? students.find(x => (x.id && x.id.toString() === editId.toString()) || (x.studentId && x.studentId.toString() === editId.toString()) || x.roll.toString() === editId.toString()) : null;
+
+      const newStudent = {
+        id: editId || ('st_' + Date.now()),
+        studentId: existingRecord ? existingRecord.studentId : null,
+        roll: rollNum,
+        name: document.getElementById('stud-name-input').value,
+        class: document.getElementById('stud-class-input').value,
+        father: document.getElementById('stud-father-input').value,
+        mother: document.getElementById('stud-mother-input').value,
+        gender: document.getElementById('stud-gender-input').value,
+        dob: document.getElementById('stud-dob-input').value,
+        mobile: document.getElementById('stud-mobile-input').value,
+        address: document.getElementById('stud-address-input').value,
+        status: 'Present'
+      };
+
+      if(editId) {
+        const idx = students.findIndex(x => (x.id && x.id.toString() === editId.toString()) || (x.studentId && x.studentId.toString() === editId.toString()) || x.roll.toString() === editId.toString());
+        if(idx !== -1) {
+          students[idx] = newStudent;
+        } else {
+          students.push(newStudent);
+        }
+        showToast(currentLang === 'hi' ? 'छात्र विवरण सफलतापूर्वक अद्यतन किया गया !' : 'Student updated successfully !');
+      } else {
+        students.push(newStudent);
+        showToast(currentLang === 'hi' ? 'नया छात्र सफलतापूर्वक जोड़ा गया !' : 'Student added successfully !');
+      }
+
+      localStorage.setItem('rr_students', JSON.stringify(students));
+
+      try {
+        fetch(`${API_BASE_URL}/students`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentId: newStudent.studentId || null,
+            rollNumber: newStudent.roll,
+            studentName: newStudent.name,
+            fatherName: newStudent.father,
+            motherName: newStudent.mother,
+            className: newStudent.class,
+            gender: newStudent.gender,
+            dateOfBirth: newStudent.dob || null,
+            parentMobile: newStudent.mobile,
+            address: newStudent.address
+          })
+        }).then(res => {
+          if(res.ok) syncSpringBootData();
+        });
+      } catch(err) {}
+
+      closeModal('modal-student');
+      initDashboard();
+      renderStudents();
+      loadAttendanceRoster();
+      populateReportCardDropdown();
+    }
+
+    // Student Delete (Targeted single record deletion by unique ID with API sync & report card refresh)
+    function handleDeleteStudentSubmit(e) {
+      e.preventDefault();
+      const selectVal = document.getElementById('del-student-select').value;
+      const targetId = selectVal.toString();
+      const targetStudent = students.find(s => (s.id && s.id.toString() === targetId) || (s.studentId && s.studentId.toString() === targetId) || s.roll.toString() === targetId);
+
+      students = students.filter(s => (s.id ? s.id.toString() !== targetId : s.roll.toString() !== targetId));
+      if(targetStudent) {
+        marks = marks.filter(m => m.roll.toString() !== targetStudent.roll.toString());
+        fees = fees.filter(f => f.student !== targetStudent.name);
+      }
+
+      localStorage.setItem('rr_students', JSON.stringify(students));
+      localStorage.setItem('rr_marks', JSON.stringify(marks));
+      localStorage.setItem('rr_fees', JSON.stringify(fees));
+
+      const apiDeleteKey = targetStudent ? (targetStudent.studentId || targetStudent.id || targetStudent.roll) : targetId;
+      try {
+        fetch(`${API_BASE_URL}/students/${apiDeleteKey}`, { method: 'DELETE' });
+      } catch(err) {}
+
+      closeModal('modal-delete-student');
+      showToast(currentLang === 'hi' ? 'छात्र सफलतापूर्वक हटा दिया गया !' : 'Student deleted successfully !');
+      initDashboard();
+      renderStudents();
+      loadAttendanceRoster();
+      populateReportCardDropdown();
+    }
+
+    function deleteStudentDirect(id) {
+      if(!id && id !== 0) return;
+      const targetId = String(id);
+      const targetStudent = students.find(s => (s.id && String(s.id) === targetId) || (s.studentId && String(s.studentId) === targetId) || String(s.roll) === targetId);
+
+      students = students.filter(s => (s.id ? String(s.id) !== targetId : String(s.roll) !== targetId));
+      if(targetStudent) {
+        marks = marks.filter(m => String(m.roll) !== String(targetStudent.roll));
+        fees = fees.filter(f => f.student !== targetStudent.name);
+      }
+
+      localStorage.setItem('rr_students', JSON.stringify(students));
+      localStorage.setItem('rr_marks', JSON.stringify(marks));
+      localStorage.setItem('rr_fees', JSON.stringify(fees));
+
+      const apiDeleteKey = targetStudent ? (targetStudent.studentId || targetStudent.id || targetStudent.roll) : targetId;
+      try {
+        fetch(`${API_BASE_URL}/students/${apiDeleteKey}`, { method: 'DELETE' });
+      } catch(err) {}
+
+      showToast(currentLang === 'hi' ? 'छात्र हटा दिया गया !' : 'Student removed successfully !');
+      initDashboard();
+      renderStudents();
+      loadAttendanceRoster();
+      populateReportCardDropdown();
+    }
+
+    function openEditSchoolModal() {
+      if(currentRole !== 'admin') {
+        alert("⚠️ Permission Denied: Only Admin can edit School Information.");
+        return;
+      }
+      document.getElementById('sch-name-input').value = schoolConfig.name || '';
+      document.getElementById('sch-sub-input').value = schoolConfig.subTitle || '';
+      document.getElementById('sch-addr-input').value = schoolConfig.address || '';
+      document.getElementById('sch-phone-input').value = schoolConfig.contact || '';
+      document.getElementById('modal-edit-school').classList.remove('hidden');
+    }
+
+    function handleSaveSchoolInfo(e) {
+      if(e) e.preventDefault();
+      if(currentRole !== 'admin') {
+        alert("⚠️ Permission Denied: Only Admin can edit School Information.");
+        return;
+      }
+      schoolConfig.name = document.getElementById('sch-name-input').value.trim();
+      schoolConfig.subTitle = document.getElementById('sch-sub-input').value.trim();
+      schoolConfig.address = document.getElementById('sch-addr-input').value.trim();
+      schoolConfig.contact = document.getElementById('sch-phone-input').value.trim();
+      localStorage.setItem('rr_school_config', JSON.stringify(schoolConfig));
+      updateSchoolDisplay();
+      closeModal('modal-edit-school');
+      showToast(currentLang === 'hi' ? 'विद्यालय की जानकारी सफलतापूर्वक अद्यतन की गई !' : 'School information updated successfully !');
+    }
+
+    let dashboardNotice = localStorage.getItem('rr_dashboard_notice') || "Parent-Teacher Meeting - Welcome to Radha Raman Education Institute! All parents are invited to the PTM.";
+    let yearlyFeeTarget = parseInt(localStorage.getItem('rr_yearly_fee_target')) || 500000;
+
+    function openEditNoticeModal() {
+      if(currentRole === 'student') return;
+      const input = document.getElementById('notice-text-input');
+      if(input) input.value = dashboardNotice;
+      document.getElementById('modal-edit-notice').classList.remove('hidden');
+    }
+
+    function handleSaveNotice(e) {
+      if(e) e.preventDefault();
+      if(currentRole === 'student') return;
+      const newText = document.getElementById('notice-text-input').value.trim();
+      if(newText) {
+        dashboardNotice = newText;
+        localStorage.setItem('rr_dashboard_notice', dashboardNotice);
+        const noticeDisplay = document.getElementById('dash-display-notice');
+        if(noticeDisplay) noticeDisplay.innerText = dashboardNotice;
+        closeModal('modal-edit-notice');
+        showToast(currentLang === 'hi' ? 'सूचना सफलतापूर्वक अद्यतन की गई !' : 'Notice updated successfully !');
+      }
+    }
+
+    function openEditFeeTargetModal() {
+      if(currentRole !== 'admin') {
+        alert("⚠️ Permission Denied: Only Admin can edit Yearly Fee Target.");
+        return;
+      }
+      const input = document.getElementById('target-amount-input');
+      if(input) input.value = yearlyFeeTarget;
+      document.getElementById('modal-edit-fee-target').classList.remove('hidden');
+    }
+
+    function handleSaveFeeTarget(e) {
+      if(e) e.preventDefault();
+      if(currentRole !== 'admin') return;
+      const val = parseInt(document.getElementById('target-amount-input').value);
+      if(!isNaN(val) && val >= 0) {
+        yearlyFeeTarget = val;
+        localStorage.setItem('rr_yearly_fee_target', yearlyFeeTarget);
+        closeModal('modal-edit-fee-target');
+        renderFees();
+        showToast(currentLang === 'hi' ? 'वार्षिक शुल्क लक्ष्य अद्यतन किया गया !' : 'Yearly fee target updated successfully !');
+      }
+    }
+
+    function openRecordFeeModal() {
+      if(currentRole === 'student') return;
+      const titleEl = document.getElementById('modal-fee-title');
+      if(titleEl) titleEl.innerText = "Record Fee Payment";
+      document.getElementById('fee-edit-idx').value = "";
+      document.getElementById('fee-stud-name').value = (students[0] ? students[0].name : '');
+      document.getElementById('fee-total-yearly').value = "₹ 15,000";
+      document.getElementById('fee-amount').value = '';
+      document.getElementById('fee-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-fee-payment').classList.remove('hidden');
+    }
+
+    function openEditFeePaymentModal(idx) {
+      if(currentRole === 'student') return;
+      const f = fees[idx];
+      if(!f) return;
+      const titleEl = document.getElementById('modal-fee-title');
+      if(titleEl) titleEl.innerText = "Edit Fee Payment";
+      document.getElementById('fee-edit-idx').value = idx;
+      document.getElementById('fee-stud-name').value = f.student || '';
+      document.getElementById('fee-total-yearly').value = f.total || '₹ 15,000';
+      document.getElementById('fee-amount').value = (f.paid || '').replace(/[^0-9]/g, '');
+      document.getElementById('fee-date').value = f.date || new Date().toISOString().split('T')[0];
+      document.getElementById('modal-fee-payment').classList.remove('hidden');
+    }
+
+    function deleteFeePayment(idx) {
+      if(currentRole === 'student') return;
+      fees.splice(idx, 1);
+      localStorage.setItem('rr_fees', JSON.stringify(fees));
+      renderFees();
+      showToast(currentLang === 'hi' ? 'शुल्क भुगतान रिकॉर्ड हटा दिया गया !' : 'Fee record deleted successfully !');
+    }
+
+    function handleSaveFeePayment(e) {
+      if(e) e.preventDefault();
+      if(currentRole === 'student') return;
+      const editIdx = document.getElementById('fee-edit-idx').value;
+      const name = document.getElementById('fee-stud-name').value.trim();
+      const totalStr = document.getElementById('fee-total-yearly').value.trim() || "₹ 15,000";
+      const amt = document.getElementById('fee-amount').value;
+      const date = document.getElementById('fee-date').value;
+
+      const totalNum = parseInt(totalStr.replace(/[^0-9]/g, '')) || 15000;
+      const paidNum = parseInt(amt) || 0;
+      const remNum = Math.max(0, totalNum - paidNum);
+
+      const feeObj = {
+        student: name,
+        total: `₹ ${totalNum.toLocaleString('en-IN')}`,
+        paid: `₹ ${paidNum.toLocaleString('en-IN')}`,
+        remaining: `₹ ${remNum.toLocaleString('en-IN')}`,
+        date: date
+      };
+
+      if(editIdx !== "" && editIdx !== null && editIdx !== undefined) {
+        fees[parseInt(editIdx)] = feeObj;
+        showToast(currentLang === 'hi' ? 'शुल्क रिकॉर्ड अद्यतन किया गया !' : 'Fee record updated successfully !');
+      } else {
+        fees.unshift(feeObj);
+        showToast(currentLang === 'hi' ? 'शुल्क भुगतान दर्ज किया गया !' : 'Fee payment recorded successfully !');
+      }
+
+      localStorage.setItem('rr_fees', JSON.stringify(fees));
+      renderFees();
+      closeModal('modal-fee-payment');
+    }
+
+    function renderFees() {
+      const container = document.getElementById('fees-list-container');
+      const targetEl = document.getElementById('fee-target-val');
+      const collectedEl = document.getElementById('fee-collected-val');
+      const pendingEl = document.getElementById('fee-pending-val');
+
+      let totalCollected = 0;
+      fees.forEach(f => {
+        const val = parseInt((f.paid || '').replace(/[^0-9]/g, '')) || 0;
+        totalCollected += val;
+      });
+
+      const totalPending = Math.max(0, yearlyFeeTarget - totalCollected);
+
+      if(targetEl) targetEl.innerText = `₹ ${yearlyFeeTarget.toLocaleString('en-IN')}`;
+      if(collectedEl) collectedEl.innerText = `₹ ${totalCollected.toLocaleString('en-IN')}`;
+      if(pendingEl) pendingEl.innerText = `₹ ${totalPending.toLocaleString('en-IN')}`;
+
+      if(!container) return;
+      if(fees.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-white/70 font-bold">
+            No fee payment records recorded yet.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = fees.map((f, idx) => {
+        const actionsHtml = currentRole === 'student' ? `<span class="text-white/40 text-[10px] font-bold">Read Only</span>` : `
+          <div class="flex items-center justify-center space-x-2">
+            <button onclick="openEditFeePaymentModal(${idx})" class="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors" title="Edit Fee Record">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="deleteFeePayment(${idx})" class="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 transition-colors" title="Delete Fee Record">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        return `
+          <div class="grid grid-cols-6 gap-2 p-3 bg-black/10 text-xs font-semibold text-white text-center items-center hover:bg-black/20">
+            <div class="font-bold text-amber-200">${f.student}</div>
+            <div>${f.total}</div>
+            <div class="text-emerald-300 font-bold">${f.paid}</div>
+            <div class="text-rose-300 font-bold">${f.remaining}</div>
+            <div>${f.date}</div>
+            <div>${actionsHtml}</div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    let attendanceHistory = JSON.parse(localStorage.getItem('rr_attendance_history')) || {};
+
+    function calculateGrade(score) {
+      const s = parseInt(score);
+      if (isNaN(s)) return 'A+';
+      if (s >= 90) return 'A+';
+      if (s >= 80) return 'A';
+      if (s >= 70) return 'B+';
+      if (s >= 60) return 'B';
+      if (s >= 50) return 'C';
+      if (s >= 33) return 'D';
+      return 'F';
+    }
+
+    function openEditMarksModal() {
+      if(currentRole === 'student') return;
+      const select = document.getElementById('mks-student-select');
+      if(!select) return;
+
+      if(students.length === 0) {
+        showToast(currentLang === 'hi' ? 'अंक जोड़ने के लिए कोई छात्र उपलब्ध नहीं है' : 'No students available to edit marks');
+        return;
+      }
+
+      select.innerHTML = students.map(s => `<option value="${s.roll}">Roll ${s.roll} - ${s.name} (${s.class})</option>`).join('');
+      onMarksStudentChange();
+      document.getElementById('modal-edit-marks').classList.remove('hidden');
+    }
+
+    function onMarksStudentChange() {
+      const select = document.getElementById('mks-student-select');
+      if(!select) return;
+      const rollVal = select.value;
+      const s = students.find(x => x.roll.toString() === rollVal.toString()) || students[0];
+      if(!s) return;
+
+      document.getElementById('mks-disp-roll').innerText = s.roll;
+      document.getElementById('mks-disp-name').innerText = s.name;
+      document.getElementById('mks-disp-class').innerText = s.class;
+
+      const examName = document.getElementById('mks-exam-name').value || "Quarterly Exam 2026";
+      const studentMarks = marks.filter(m => m.roll.toString() === s.roll.toString() && m.exam === examName);
+
+      const formList = document.getElementById('mks-subjects-form-list');
+      if(!formList) return;
+
+      formList.innerHTML = configuredSubjects.map((sub, idx) => {
+        const existing = studentMarks.find(m => m.subject === sub);
+        const scoreVal = existing ? existing.score : '';
+        const gradeVal = existing ? existing.grade : 'A+';
+
+        return `
+          <div class="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-xs font-bold text-slate-800 w-1/3 truncate">${sub}</span>
+            <div class="flex items-center space-x-2 flex-1">
+              <input type="number" id="mks-score-sub-${idx}" min="0" max="100" value="${scoreVal}" placeholder="Score (0-100)" 
+                oninput="document.getElementById('mks-grade-sub-${idx}').value = calculateGrade(this.value)"
+                class="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-300 font-bold text-xs focus:ring-2 focus:ring-purple-600">
+              <select id="mks-grade-sub-${idx}" class="px-2 py-1.5 rounded-lg bg-white border border-slate-300 font-bold text-xs text-purple-900">
+                <option value="A+" ${gradeVal === 'A+' ? 'selected' : ''}>A+</option>
+                <option value="A" ${gradeVal === 'A' ? 'selected' : ''}>A</option>
+                <option value="B+" ${gradeVal === 'B+' ? 'selected' : ''}>B+</option>
+                <option value="B" ${gradeVal === 'B' ? 'selected' : ''}>B</option>
+                <option value="C" ${gradeVal === 'C' ? 'selected' : ''}>C</option>
+                <option value="D" ${gradeVal === 'D' ? 'selected' : ''}>D</option>
+                <option value="F" ${gradeVal === 'F' ? 'selected' : ''}>F</option>
+              </select>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleSaveMarks(e) {
+      e.preventDefault();
+      if(currentRole === 'student') return;
+      const select = document.getElementById('mks-student-select');
+      const rollVal = parseInt(select.value);
+      const s = students.find(x => x.roll === rollVal);
+      if(!s) return;
+
+      const examName = document.getElementById('mks-exam-name').value.trim() || "Quarterly Exam 2026";
+
+      configuredSubjects.forEach((sub, idx) => {
+        const scoreInput = document.getElementById(`mks-score-sub-${idx}`);
+        const gradeInput = document.getElementById(`mks-grade-sub-${idx}`);
+        if(!scoreInput || !gradeInput) return;
+
+        const score = scoreInput.value !== '' ? parseInt(scoreInput.value) : 0;
+        const grade = gradeInput.value || calculateGrade(score);
+
+        const existingIdx = marks.findIndex(m => m.roll === rollVal && m.subject === sub && m.exam === examName);
+        if(existingIdx !== -1) {
+          marks[existingIdx].score = score;
+          marks[existingIdx].grade = grade;
+          marks[existingIdx].class = s.class;
+        } else {
+          marks.unshift({
+            roll: rollVal,
+            class: s.class,
+            subject: sub,
+            exam: examName,
+            score: score,
+            grade: grade
+          });
+        }
+      });
+
+      localStorage.setItem('rr_marks', JSON.stringify(marks));
+      renderMarks();
+      populateReportCardDropdown();
+      closeModal('modal-edit-marks');
+      showToast(currentLang === 'hi' ? 'सभी विषयों के अंक सफलतापूर्वक सहेजे गए !' : 'Marks & grades for all subjects saved successfully !');
+    }
+
+    function openDeleteMarksModal() {
+      if(currentRole === 'student') return;
+      if(marks.length === 0) {
+        showToast(currentLang === 'hi' ? 'हटाने के लिए कोई अंक उपलब्ध नहीं है' : 'No marks records available to delete');
+        return;
+      }
+      const select = document.getElementById('del-marks-student-select');
+      if(select) {
+        const rollsWithMarks = [...new Set(marks.map(m => m.roll))];
+        select.innerHTML = rollsWithMarks.map(r => {
+          const s = students.find(x => x.roll.toString() === r.toString());
+          return `<option value="${r}">Roll ${r} - ${s ? s.name : 'Student'} (${s ? s.class : ''})</option>`;
+        }).join('');
+      }
+      document.getElementById('modal-delete-marks').classList.remove('hidden');
+    }
+
+    function handleDeleteMarksSubmit(e) {
+      e.preventDefault();
+      if(currentRole === 'student') return;
+      const rollVal = document.getElementById('del-marks-student-select').value;
+      marks = marks.filter(m => m.roll.toString() !== rollVal.toString());
+      localStorage.setItem('rr_marks', JSON.stringify(marks));
+      closeModal('modal-delete-marks');
+      renderMarks();
+      populateReportCardDropdown();
+      showToast(currentLang === 'hi' ? 'छात्र के सभी अंक सफलतापूर्वक हटा दिए गए !' : 'All marks for selected student deleted !');
+    }
+
+    function deleteSingleMark(roll, subject, exam) {
+      if(currentRole === 'student') return;
+      const targetRoll = roll.toString();
+      marks = marks.filter(m => !(m.roll.toString() === targetRoll && m.subject === subject && m.exam === exam));
+      localStorage.setItem('rr_marks', JSON.stringify(marks));
+      renderMarks();
+      populateReportCardDropdown();
+      showToast(currentLang === 'hi' ? 'अंक प्रविष्टि हटा दी गई !' : 'Mark entry deleted successfully !');
+    }
+
+    function loadAttendanceRoster() {
+      const dateInput = document.getElementById('att-date-input');
+      if(dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
+      const selectedDate = dateInput ? dateInput.value : '2026-09-28';
+      const classFilterEl = document.getElementById('att-class-filter');
+      const selectedClass = classFilterEl ? classFilterEl.value : (configuredClasses[0] || '1st');
+      const container = document.getElementById('attendance-roster-container');
+
+      const dateEntry = attendanceHistory[selectedDate];
+      const statusBadge = document.getElementById('att-status-badge');
+      const filtered = students.filter(s => s.class === selectedClass);
+
+      if (dateEntry && dateEntry.isHoliday) {
+        if(statusBadge) {
+          statusBadge.innerText = 'Holiday';
+          statusBadge.className = 'px-2.5 py-1 rounded-full text-[10px] bg-amber-400 text-slate-950 font-extrabold';
+        }
+        document.getElementById('att-total-cnt').innerText = filtered.length;
+        document.getElementById('att-present-cnt').innerText = 0;
+        document.getElementById('att-absent-cnt').innerText = 0;
+
+        container.innerHTML = `
+          <div class="p-10 text-center space-y-3 bg-amber-500/10 rounded-2xl border border-amber-400/30">
+            <div class="text-4xl">☀️</div>
+            <h4 class="text-lg font-extrabold text-amber-300">School-Wide Holiday Declared</h4>
+            <p class="text-xs font-bold text-white/90">Date: <span class="font-mono text-amber-200">${selectedDate}</span> | All Classes</p>
+            <p class="text-xs font-semibold text-amber-100 bg-black/20 inline-block px-4 py-1.5 rounded-full border border-amber-300/30">Reason: ${dateEntry.holidayReason || 'School Holiday'}</p>
+          </div>
+        `;
+        return;
+      }
+
+      const savedClassRecords = (dateEntry && dateEntry.classes && dateEntry.classes[selectedClass]) ? dateEntry.classes[selectedClass] : null;
+
+      if (savedClassRecords) {
+        if(statusBadge) {
+          statusBadge.innerText = 'Saved Record';
+          statusBadge.className = 'px-2.5 py-1 rounded-full text-[10px] bg-emerald-400 text-slate-950 font-extrabold';
+        }
+        filtered.forEach(s => {
+          if (savedClassRecords[s.roll] !== undefined) {
+            s.status = savedClassRecords[s.roll];
+          }
+        });
+      } else {
+        if(statusBadge) {
+          statusBadge.innerText = 'Unsaved / New Date';
+          statusBadge.className = 'px-2.5 py-1 rounded-full text-[10px] bg-indigo-200 text-slate-900 font-extrabold';
+        }
+      }
+
+      let presentCount = filtered.filter(s => s.status === 'Present').length;
+      let absentCount = filtered.length - presentCount;
+
+      document.getElementById('att-total-cnt').innerText = filtered.length;
+      document.getElementById('att-present-cnt').innerText = presentCount;
+      document.getElementById('att-absent-cnt').innerText = absentCount;
+
+      if(filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-12 text-center space-y-2">
+            <p class="text-xl font-extrabold text-white">${currentLang === 'hi' ? 'इस कक्षा में कोई छात्र दर्ज नहीं है' : 'No students found in this class'}</p>
+            <p class="text-xs font-bold text-white/80">${currentLang === 'hi' ? 'छात्र जोड़ने के लिए छात्र प्रबंधन पर जाएँ' : 'Go to Student Management to add students to ' + (selectedClass || '')}</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(s => `
+        <div class="grid grid-cols-4 gap-2 p-3 bg-black/10 text-xs font-semibold text-white text-center items-center hover:bg-black/20">
+          <div>${s.roll}</div>
+          <div class="font-bold text-amber-200">${s.name}</div>
+          <div>${s.class}</div>
+          <div>
+            <button onclick="toggleStudentAttendance(${s.roll})" class="px-4 py-1.5 rounded-full text-xs font-extrabold shadow transition-all ${s.status === 'Present' ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-rose-600 hover:bg-rose-500 text-white'}">
+              ${s.status === 'Present' ? (currentLang === 'hi' ? 'उपस्थित (Present)' : 'Present') : (currentLang === 'hi' ? 'अनुपस्थित (Absent)' : 'Absent')}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleStudentAttendance(roll) {
+      if(currentRole === 'student') return;
+      const s = students.find(x => x.roll.toString() === roll.toString());
+      if(s) {
+        s.status = s.status === 'Present' ? 'Absent' : 'Present';
+        loadAttendanceRoster();
+      }
+    }
+
+    function saveAttendance() {
+      if(currentRole === 'student') return;
+      const selectedDate = document.getElementById('att-date-input').value;
+      const selectedClass = document.getElementById('att-class-filter').value || configuredClasses[0] || '1st';
+
+      if (!attendanceHistory[selectedDate]) {
+        attendanceHistory[selectedDate] = {
+          date: selectedDate,
+          isHoliday: false,
+          holidayReason: '',
+          classes: {}
+        };
+      }
+
+      attendanceHistory[selectedDate].isHoliday = false;
+      if (!attendanceHistory[selectedDate].classes) {
+        attendanceHistory[selectedDate].classes = {};
+      }
+
+      const filtered = students.filter(s => s.class === selectedClass);
+      const recordsMap = {};
+      filtered.forEach(s => {
+        recordsMap[s.roll] = s.status || 'Present';
+      });
+
+      attendanceHistory[selectedDate].classes[selectedClass] = recordsMap;
+
+      localStorage.setItem('rr_attendance_history', JSON.stringify(attendanceHistory));
+      loadAttendanceRoster();
+      showToast(currentLang === 'hi' ? `दिनांक ${selectedDate} (${selectedClass}) की उपस्थिति सहेजी गई !` : `Attendance saved for ${selectedDate} (${selectedClass}) !`);
+    }
+
+    function openHolidayModal() {
+      if(currentRole === 'student') return;
+      document.getElementById('holiday-reason-input').value = '';
+      document.getElementById('modal-holiday').classList.remove('hidden');
+    }
+
+    function handleSaveHoliday(e) {
+      if(e) e.preventDefault();
+      if(currentRole === 'student') return;
+      const selectedDate = document.getElementById('att-date-input').value;
+      const reason = document.getElementById('holiday-reason-input').value.trim() || 'School Holiday';
+
+      attendanceHistory[selectedDate] = {
+        date: selectedDate,
+        isHoliday: true,
+        holidayReason: reason,
+        classes: (attendanceHistory[selectedDate] && attendanceHistory[selectedDate].classes) ? attendanceHistory[selectedDate].classes : {}
+      };
+
+      localStorage.setItem('rr_attendance_history', JSON.stringify(attendanceHistory));
+      closeModal('modal-holiday');
+      loadAttendanceRoster();
+      showToast(`Date ${selectedDate} marked as School-Wide Holiday (${reason}) !`);
+    }
+
+    function deleteAttendanceForCurrentDate() {
+      if(currentRole === 'student') return;
+      const selectedDate = document.getElementById('att-date-input').value;
+
+      if(!attendanceHistory[selectedDate]) {
+        showToast(currentLang === 'hi' ? 'इस दिनांक के लिए कोई सहेजा गया रिकॉर्ड नहीं है' : 'No saved record exists for this date');
+        return;
+      }
+
+      delete attendanceHistory[selectedDate];
+      localStorage.setItem('rr_attendance_history', JSON.stringify(attendanceHistory));
+      loadAttendanceRoster();
+      showToast(`Attendance & holiday record for ${selectedDate} deleted !`);
+    }
+
+    function openAttendanceHistoryModal() {
+      const container = document.getElementById('att-history-list');
+      const dates = Object.keys(attendanceHistory);
+
+      if(dates.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-8 font-bold">No past attendance logs recorded yet.</p>`;
+      } else {
+        dates.sort((a,b) => b.localeCompare(a));
+        container.innerHTML = dates.map(d => {
+          const item = attendanceHistory[d];
+          if(item.isHoliday) {
+            return `
+              <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between">
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs font-extrabold text-amber-900">${item.date}</span>
+                    <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-950 font-bold text-[10px]">All Classes</span>
+                  </div>
+                  <p class="text-xs text-amber-800 font-semibold mt-0.5">☀️ School Holiday: ${item.holidayReason || 'School Holiday'}</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button onclick="loadHistoryDate('${item.date}')" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow">View</button>
+                  ${currentRole === 'student' ? '' : `<button onclick="deleteHistoryEntry('${d}')" class="p-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-xs">🗑️</button>`}
+                </div>
+              </div>
+            `;
+          }
+
+          const classesObj = item.classes || {};
+          const recordedClasses = Object.keys(classesObj);
+          let total = 0, present = 0;
+          recordedClasses.forEach(c => {
+            const rec = classesObj[c];
+            const studentRolls = Object.keys(rec);
+            total += studentRolls.length;
+            present += Object.values(rec).filter(v => v === 'Present').length;
+          });
+          const absent = total - present;
+
+          return `
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-xs font-extrabold text-slate-900">${item.date}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 font-bold text-[10px]">${recordedClasses.join(', ') || 'No Classes'}</span>
+                </div>
+                <p class="text-xs text-slate-600 font-semibold mt-0.5">
+                  Total: <strong class="text-slate-900">${total}</strong> | 
+                  Present: <strong class="text-emerald-600">${present}</strong> | 
+                  Absent: <strong class="text-rose-600">${absent}</strong>
+                </p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button onclick="loadHistoryDate('${item.date}')" class="px-3 py-1.5 rounded-xl bg-[#463EC7] hover:bg-indigo-700 text-white text-xs font-bold shadow">View</button>
+                ${currentRole === 'student' ? '' : `<button onclick="deleteHistoryEntry('${d}')" class="p-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-xs">🗑️</button>`}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('modal-attendance-history').classList.remove('hidden');
+    }
+
+    function loadHistoryDate(date) {
+      document.getElementById('att-date-input').value = date;
+      closeModal('modal-attendance-history');
+      loadAttendanceRoster();
+      showToast(`Loaded attendance log for ${date}`);
+    }
+
+    function deleteHistoryEntry(date) {
+      delete attendanceHistory[date];
+      localStorage.setItem('rr_attendance_history', JSON.stringify(attendanceHistory));
+      openAttendanceHistoryModal();
+      loadAttendanceRoster();
+      showToast('Attendance log entry deleted!');
+    }
+
+    function renderMarks() {
+      const container = document.getElementById('marks-sheet-container');
+
+      // Calculate Top Metrics: Class Average Score & Top Performer
+      const avgScoreEl = document.getElementById('marks-avg-score');
+      const topPerfEl = document.getElementById('marks-top-performer');
+
+      if (marks.length > 0) {
+        const totalScoreSum = marks.reduce((acc, m) => acc + (parseInt(m.score) || 0), 0);
+        const avgScore = (totalScoreSum / marks.length).toFixed(1);
+        if (avgScoreEl) avgScoreEl.innerText = `${avgScore} %`;
+
+        const studentTotals = {};
+        marks.forEach(m => {
+          studentTotals[m.roll] = (studentTotals[m.roll] || 0) + (parseInt(m.score) || 0);
+        });
+
+        let topRoll = null;
+        let maxScore = -1;
+        Object.keys(studentTotals).forEach(r => {
+          if (studentTotals[r] > maxScore) {
+            maxScore = studentTotals[r];
+            topRoll = r;
+          }
+        });
+
+        if (topRoll) {
+          const topStudent = students.find(s => s.roll.toString() === topRoll.toString());
+          if (topPerfEl) topPerfEl.innerText = topStudent ? `${topStudent.name} (${maxScore} Marks)` : `Roll ${topRoll} (${maxScore} Marks)`;
+        }
+      } else {
+        if (avgScoreEl) avgScoreEl.innerText = '--';
+        if (topPerfEl) topPerfEl.innerText = '--';
+      }
+
+      if(marks.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-white/70 font-bold">
+            No examination marks entered yet.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = marks.map(m => `
+        <div class="grid grid-cols-7 gap-2 p-3 bg-black/10 text-xs font-semibold text-white text-center items-center hover:bg-black/20">
+          <div>${m.roll}</div>
+          <div>${m.class}</div>
+          <div>${m.subject}</div>
+          <div>${m.exam}</div>
+          <div class="font-bold text-amber-200">${m.score}</div>
+          <div class="font-extrabold text-emerald-300">${m.grade}</div>
+          <div>
+            ${currentRole === 'student' ? '<span class="text-white/40 text-[10px]">Read Only</span>' : `
+              <button onclick="deleteSingleMark('${m.roll}', '${m.subject}', '${m.exam}')" class="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 transition-colors" title="Delete Mark Entry">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            `}
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function renderStudents() {
+      const container = document.getElementById('students-table-body');
+      const searchQuery = (document.getElementById('student-search').value || '').toLowerCase();
+      const t = translations[currentLang];
+
+      const filtered = students.filter(s => 
+        s.name.toLowerCase().includes(searchQuery) || 
+        s.roll.toString().includes(searchQuery) ||
+        (s.father && s.father.toLowerCase().includes(searchQuery))
+      );
+
+      if(filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-12 text-center space-y-3">
+            <p class="text-xl font-extrabold text-white">${t.emptyStuTitle}</p>
+            <p class="text-xs font-bold text-white/80">${t.emptyStuSub}</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(s => {
+        const itemKey = s.id || s.studentId || s.roll;
+        const actionsCellHtml = (currentRole === 'student') ? `<span class="text-white/40 text-[10px] font-bold">Read Only</span>` : `
+          <div class="flex items-center justify-center space-x-2">
+            <button onclick="openEditStudentModal('${itemKey}')" class="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 transition-colors" title="Edit Student">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="deleteStudentDirect('${itemKey}')" class="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 transition-colors" title="Delete Student">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        return `
+        <div class="grid grid-cols-9 gap-2 p-3 bg-black/10 text-xs font-semibold text-white text-center items-center hover:bg-black/20">
+          <div>${s.roll}</div>
+          <div class="font-bold text-amber-200">${s.name}</div>
+          <div><span class="px-2 py-0.5 rounded-full bg-white/20 font-bold">${s.class}</span></div>
+          <div>${s.father}</div>
+          <div class="font-mono text-emerald-300">${s.mobile}</div>
+          <div>${s.gender}</div>
+          <div>${s.dob || '-'}</div>
+          <div class="truncate">${s.address || '-'}</div>
+          <div>${actionsCellHtml}</div>
+        </div>
+      `}).join('');
+      lucide.createIcons();
+    }
+
+    function renderTeachers() {
+      const container = document.getElementById('teachers-grid');
+      if(teachers.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 p-12 text-center space-y-2 bg-black/10 rounded-2xl">
+            <p class="text-lg font-extrabold text-white">No Teachers Added</p>
+            <p class="text-xs font-bold text-white/80">Click "+ Add Teacher" to create faculty records</p>
+          </div>
+        `;
+        return;
+      }
+      container.innerHTML = teachers.map(t => {
+        const deleteBtnHtml = (currentRole === 'student') ? '' : `
+          <button onclick="deleteTeacherDirect(${t.id})" class="p-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 transition-colors" title="Delete Teacher">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        `;
+        return `
+        <div class="p-4 rounded-2xl bg-black/20 border border-white/20 space-y-2 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-full bg-amber-400 text-slate-950 font-extrabold flex items-center justify-center text-sm shadow">
+              👩‍🏫
+            </div>
+            <div>
+              <h4 class="text-sm font-extrabold text-white">${t.name}</h4>
+              <p class="text-xs text-amber-300 font-semibold">${t.subject} • ${t.qualification || 'Faculty'}</p>
+              <p class="text-[11px] text-white/70 font-mono">${t.mobile}</p>
+            </div>
+          </div>
+          ${deleteBtnHtml}
+        </div>
+      `}).join('');
+    }
+
+
+
+    function populateReportCardDropdown() {
+      const select = document.getElementById('report-card-student-select');
+      if(!select) return;
+      if(students.length === 0) {
+        select.innerHTML = `<option value="">No Students</option>`;
+        generateReportCard();
+        return;
+      }
+      select.innerHTML = students.map(s => `<option value="${s.roll}">${s.name} (${s.class})</option>`).join('');
+      generateReportCard();
+    }
+
+    function generateReportCard() {
+      const select = document.getElementById('report-card-student-select');
+      const rollVal = select ? select.value : '';
+      const s = students.find(x => x.roll.toString() === rollVal) || (students.length > 0 ? students[0] : null);
+
+      if(!s) {
+        document.getElementById('rc-roll').innerText = '--';
+        document.getElementById('rc-student-name').innerText = 'No Student Available';
+        document.getElementById('rc-father').innerText = '--';
+        document.getElementById('rc-class').innerText = '--';
+        document.getElementById('rc-marks-body').innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-500 font-extrabold">No students available. Please add a student to generate report card.</td></tr>`;
+        renderDigitalSignatures(null);
+        return;
+      }
+
+      document.getElementById('rc-roll').innerText = s.roll;
+      document.getElementById('rc-student-name').innerText = s.name;
+      document.getElementById('rc-father').innerText = s.father;
+      document.getElementById('rc-class').innerText = s.class;
+
+      const studentMarks = marks.filter(m => m.roll.toString() === s.roll.toString());
+      if(studentMarks.length === 0) {
+        document.getElementById('rc-marks-body').innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-500 font-extrabold">No exam marks entered for this student yet.</td></tr>`;
+      } else {
+        document.getElementById('rc-marks-body').innerHTML = studentMarks.map(m => `
+          <tr>
+            <td class="p-3 border border-indigo-300 font-bold text-slate-900">${m.subject}</td>
+            <td class="p-3 border border-indigo-300 text-center font-bold">100</td>
+            <td class="p-3 border border-indigo-300 text-center font-extrabold text-slate-900">${m.score}</td>
+            <td class="p-3 border border-indigo-300 text-center font-extrabold text-purple-900">${m.grade}</td>
+          </tr>
+        `).join('');
+      }
+
+      renderDigitalSignatures(s.class);
+    }
+
+    async function syncSpringBootData() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/students`);
+        if(response.ok) {
+          const apiStudents = await response.json();
+          if(Array.isArray(apiStudents)) {
+            students = apiStudents.map(s => ({
+              id: s.studentId || s.id || ('st_' + (s.rollNumber || Math.random())),
+              studentId: s.studentId,
+              roll: s.rollNumber !== undefined ? s.rollNumber : (s.roll || 101),
+              name: s.studentName || s.name || 'Student',
+              father: s.fatherName || s.father || '',
+              mother: s.motherName || s.mother || '',
+              class: s.className || s.class || '1st',
+              gender: s.gender || 'Male',
+              dob: s.dateOfBirth || s.dob || '',
+              mobile: s.parentMobile || s.mobile || '',
+              address: s.address || '',
+              status: 'Present'
+            }));
+            localStorage.setItem('rr_students', JSON.stringify(students));
+            initDashboard();
+            if(currentFrame === 'students') renderStudents();
+            if(currentFrame === 'attendance') loadAttendanceRoster();
+            if(currentFrame === 'reports') populateReportCardDropdown();
+          }
+        }
+      } catch (err) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      updateSchoolDisplay();
+      populateClassAndSubjectDropdowns();
+      applyTranslations();
+      initDashboard();
+      renderTeachers();
+      renderFees();
+      renderMarks();
+      loadAttendanceRoster();
+      syncSpringBootData();
+    });
+
+    // PWA App Installation Handling
+    let deferredPWAEvent;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPWAEvent = e;
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.classList.remove('hidden');
+    });
+
+    function installPWA() {
+      if (deferredPWAEvent) {
+        deferredPWAEvent.prompt();
+        deferredPWAEvent.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.add('hidden');
+            showToast(currentLang === 'hi' ? 'ऐप सफलतापूर्वक आपके डिवाइस पर इंस्टॉल हो गया !' : 'App installed successfully on your device !');
+          }
+          deferredPWAEvent = null;
+        });
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
