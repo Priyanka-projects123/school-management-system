@@ -6,6 +6,13 @@ RUN ./mvnw clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
+RUN mkdir -p /app/data
 COPY --from=build /app/target/*.jar /app/app.jar
+
+ENV SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/schooldb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+ENV SPRING_DATASOURCE_DRIVER=org.h2.Driver
+ENV SPRING_DATASOURCE_USERNAME=sa
+ENV SPRING_DATASOURCE_PASSWORD=
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dspring.datasource.url=jdbc:h2:file:/app/data/schooldb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE", "-Dspring.datasource.driverClassName=org.h2.Driver", "-Dspring.datasource.username=sa", "-Dspring.datasource.password=", "-Dspring.jpa.database-platform=org.hibernate.dialect.H2Dialect", "-Dspring.jpa.hibernate.ddl-auto=update", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
